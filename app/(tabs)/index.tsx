@@ -9,7 +9,6 @@ import {
   Modal,
   FlatList,
   SafeAreaView,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import {
@@ -22,7 +21,7 @@ import {
   X,
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
-import { SkatingAPI } from '@/services/api';
+// import { SkatingAPI } from '@/services/api';
 
 interface Result {
   id: number;
@@ -52,11 +51,10 @@ export default function RankingsScreen() {
   const [showANSTime, setShowANSTime] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+
   const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
-  const [apiResults, setApiResults] = useState<Result[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [useApiData, setUseApiData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const [filters, setFilters] = useState({
     distance: 'all',
@@ -69,80 +67,49 @@ export default function RankingsScreen() {
 
   const resultsPerPage = 20;
 
-  // Fetch data from API
+  // Initialize component
   useEffect(() => {
-    let isMounted = true;
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setError(null);
+    }, 500); // Small delay for better UX
     
-    const fetchResults = async () => {
-      if (isMounted) setIsLoading(true);
-      try {
-        const apiFilters = {
-          distance: filters.distance,
-          season: filters.season,
-          gender: filters.geslachten,
-          level: filters.level,
-          category: filters.category,
-          track: filters.track,
-          search: searchQuery,
-        };
-        
-        const results = await SkatingAPI.getRaces(apiFilters);
-        
-        if (results.length > 0) {
-          if (isMounted) setApiResults(results);
-          if (isMounted) setUseApiData(true);
-        } else {
-          // Fallback to local data if API returns no results
-          if (isMounted) setUseApiData(false);
-        }
-      } catch (error) {
-        console.error('Failed to fetch from API, using local data:', error);
-        if (isMounted) setUseApiData(false);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    };
-
-    fetchResults();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [filters, searchQuery]);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Filter results based on current filters and search
   const filteredResults = useMemo(() => {
-    let results = useApiData ? [...apiResults] : [...skatingData.mockResults];
+    // Use local data since API is temporarily disabled
+    const localData = skatingData?.mockResults && Array.isArray(skatingData.mockResults) ? skatingData.mockResults : [];
+    
+    let results = [...localData];
 
-    // Only apply local filtering if using local data (API handles filtering server-side)
-    if (!useApiData) {
-      // Apply search filter
-      if (searchQuery.trim()) {
-        results = results.filter(result =>
-          result.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      }
+    // Apply search filter
+    if (searchQuery.trim()) {
+      results = results.filter(result =>
+        result.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
 
-      // Apply dropdown filters
-      if (filters.distance !== 'all') {
-        results = results.filter(result => result.distance.toString() === filters.distance);
-      }
-      if (filters.geslachten !== 'all') {
-        results = results.filter(result => result.geslachten === filters.geslachten);
-      }
-      if (filters.level !== 'all') {
-        results = results.filter(result => result.level === filters.level);
-      }
-      if (filters.category !== 'all') {
-        results = results.filter(result => result.category === filters.category);
-      }
-      if (filters.track !== 'all') {
-        results = results.filter(result => result.track === filters.track);
-      }
+    // Apply dropdown filters
+    if (filters.distance !== 'all') {
+      results = results.filter(result => result.distance.toString() === filters.distance);
+    }
+    if (filters.geslachten !== 'all') {
+      results = results.filter(result => result.geslachten === filters.geslachten);
+    }
+    if (filters.level !== 'all') {
+      results = results.filter(result => result.level === filters.level);
+    }
+    if (filters.category !== 'all') {
+      results = results.filter(result => result.category === filters.category);
+    }
+    if (filters.track !== 'all') {
+      results = results.filter(result => result.track === filters.track);
     }
 
     return results;
-  }, [searchQuery, filters, apiResults, useApiData]);
+  }, [searchQuery, filters]);
 
   // Paginated results
   const paginatedResults = useMemo(() => {
@@ -228,12 +195,7 @@ export default function RankingsScreen() {
 
   const renderResultItem = ({ item }: { item: Result }) => (
     <TouchableOpacity 
-      style={[
-        styles.resultRow,
-        hoveredItem === item.id && styles.resultRowHovered
-      ]}
-      onPressIn={() => setHoveredItem(item.id)}
-      onPressOut={() => setHoveredItem(null)}
+      style={styles.resultRow}
       activeOpacity={0.7}
       onPress={() => setSelectedSkater(item)}
     >
@@ -318,12 +280,12 @@ export default function RankingsScreen() {
             {/* Filter Dropdowns */}
             <View style={styles.filtersGrid}>
               {[
-                { key: 'distance', title: 'Afstand', options: skatingData.filterOptions.distances },
-                { key: 'season', title: 'Seizoen', options: skatingData.filterOptions.seasons },
-                { key: 'geslachten', title: 'Geslacht', options: skatingData.filterOptions.geslachten },
-                { key: 'level', title: 'Niveau', options: skatingData.filterOptions.levels },
-                { key: 'category', title: 'Categorie', options: skatingData.filterOptions.categories },
-                { key: 'track', title: 'Baan', options: skatingData.filterOptions.tracks },
+                { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
+                { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
+                { key: 'geslachten', title: 'Geslacht', options: skatingData?.filterOptions?.geslachten || [] },
+                { key: 'level', title: 'Niveau', options: skatingData?.filterOptions?.levels || [] },
+                { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
+                { key: 'track', title: 'Baan', options: skatingData?.filterOptions?.tracks || [] },
               ].map(({ key, title, options }) => (
                 <TouchableOpacity
                   key={key}
@@ -372,8 +334,22 @@ export default function RankingsScreen() {
           <Text style={styles.headerText}>Tijd</Text>
         </View>
 
+        {/* Error State */}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorTitle}>Er is een fout opgetreden</Text>
+            <Text style={styles.errorMessage}>{error}</Text>
+            <TouchableOpacity 
+              style={styles.errorButton}
+              onPress={() => setError(null)}
+            >
+              <Text style={styles.errorButtonText}>Opnieuw proberen</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Loading State */}
-        {isLoading && (
+        {isLoading && !error && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#1E3A8A" />
             <Text style={styles.loadingText}>Resultaten laden...</Text>
@@ -419,12 +395,12 @@ export default function RankingsScreen() {
       </ScrollView>
 
       {/* Filter Modals */}
-      {renderFilterModal('Afstand', skatingData.filterOptions.distances, filters.distance, 'distance')}
-      {renderFilterModal('Seizoen', skatingData.filterOptions.seasons, filters.season, 'season')}
-      {renderFilterModal('Geslacht', skatingData.filterOptions.geslachten, filters.geslachten, 'geslachten')}
-      {renderFilterModal('Niveau', skatingData.filterOptions.levels, filters.level, 'level')}
-      {renderFilterModal('Categorie', skatingData.filterOptions.categories, filters.category, 'category')}
-      {renderFilterModal('Baan', skatingData.filterOptions.tracks, filters.track, 'track')}
+      {renderFilterModal('Afstand', skatingData?.filterOptions?.distances || [], filters.distance, 'distance')}
+      {renderFilterModal('Seizoen', skatingData?.filterOptions?.seasons || [], filters.season, 'season')}
+      {renderFilterModal('Geslacht', skatingData?.filterOptions?.geslachten || [], filters.geslachten, 'geslachten')}
+      {renderFilterModal('Niveau', skatingData?.filterOptions?.levels || [], filters.level, 'level')}
+      {renderFilterModal('Categorie', skatingData?.filterOptions?.categories || [], filters.category, 'category')}
+      {renderFilterModal('Baan', skatingData?.filterOptions?.tracks || [], filters.track, 'track')}
 
       {/* Skater Detail Modal */}
       <Modal
@@ -508,10 +484,10 @@ export default function RankingsScreen() {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
-      </SafeAreaView>
-    </View>
-  );
-}
+              </SafeAreaView>
+      </View>
+    );
+  }
 
 const styles = StyleSheet.create({
   container: {
@@ -770,9 +746,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F1F5F9',
     backgroundColor: '#fff',
   },
-  resultRowHovered: {
-    backgroundColor: '#F8FAFC',
-  },
+
   nameSection: {
     flex: 1,
     flexDirection: 'row',
@@ -827,6 +801,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#64748B',
     fontWeight: '500',
+  },
+  errorContainer: {
+    backgroundColor: '#FEF2F2',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    borderRadius: 12,
+    margin: 20,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#DC2626',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#7F1D1D',
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  errorButton: {
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  errorButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   detailModalOverlay: {
     flex: 1,

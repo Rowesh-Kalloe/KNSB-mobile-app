@@ -154,7 +154,18 @@ export const SkatingAPI = {
 
       console.log('getRaces request body:', requestBody);
       const data = await httpPost('/getRaces', requestBody);
-      return data.races || data.results || data || [];
+      console.log('Raw API response:', data);
+      
+      // Handle different response formats
+      if (data && typeof data === 'object') {
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.races)) return data.races;
+        if (Array.isArray(data.results)) return data.results;
+        if (data.data && Array.isArray(data.data)) return data.data;
+      }
+      
+      console.warn('Unexpected API response format:', data);
+      return [];
     } catch (error) {
       console.error('Error in getRaces:', error);
       return [];
