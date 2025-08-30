@@ -320,8 +320,10 @@ export default function RankingsScreen() {
 
         {/* Results Header */}
         <View style={styles.resultsHeader}>
-          <Text style={styles.headerText}>Pos.</Text>
-          <Text style={styles.headerText}>Naam</Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerText}>Pos.</Text>
+            <Text style={styles.headerText}>Naam</Text>
+          </View>
           <Text style={styles.headerText}>Tijd</Text>
         </View>
 
@@ -684,12 +686,18 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
   headerText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    marginRight: 16,
   },
   resultsList: {
     flex: 1,
@@ -718,7 +726,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    marginRight: 12,
+    marginRight: 16,
     minWidth: 32,
     alignItems: 'center',
   },
