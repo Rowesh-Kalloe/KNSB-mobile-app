@@ -320,6 +320,7 @@ export default function RankingsScreen() {
 
         {/* Results Header */}
         <View style={styles.resultsHeader}>
+          <Text style={styles.headerText}>Pos.</Text>
           <Text style={styles.headerText}>Naam</Text>
           <Text style={styles.headerText}>Tijd</Text>
         </View>
@@ -711,7 +712,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   positionBadge: {
     backgroundColor: '#1E3A8A',
