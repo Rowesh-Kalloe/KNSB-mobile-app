@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
+    "dev:proxy": "node services/proxy/server.js",
+    "dev:all": "npm run dev:proxy & npm run dev",
     "build:web": "expo export --platform web",
     "lint": "expo lint"
   },
