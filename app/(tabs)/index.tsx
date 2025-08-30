@@ -51,6 +51,7 @@ export default function RankingsScreen() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
+  const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
   
   const [filters, setFilters] = useState({
     distance: 'all',
@@ -184,20 +185,17 @@ export default function RankingsScreen() {
       ]}
       onPressIn={() => setHoveredItem(item.id)}
       onPressOut={() => setHoveredItem(null)}
-      activeOpacity={1}
+      activeOpacity={0.7}
+      onPress={() => setSelectedSkater(item)}
     >
-      <View style={styles.resultCell}>
-        <Text style={styles.positionText}>{item.position}</Text>
-      </View>
-      <View style={[styles.resultCell, styles.nameCell]}>
+      <View style={styles.nameSection}>
+        <View style={styles.positionBadge}>
+          <Text style={styles.positionBadgeText}>{item.position}</Text>
+        </View>
         <Text style={styles.nameText}>{item.name}</Text>
         <Text style={styles.categoryText}>{item.category}</Text>
       </View>
-      <View style={styles.resultCell}>
-        <Text style={styles.dateText}>{item.date}</Text>
-        <Text style={styles.trackText}>{item.track}</Text>
-      </View>
-      <View style={styles.resultCell}>
+      <View style={styles.timeSection}>
         <Text style={styles.timeText}>
           {showANSTime ? item.ansTime : item.time}
         </Text>
@@ -323,18 +321,8 @@ export default function RankingsScreen() {
 
         {/* Results Header */}
         <View style={styles.resultsHeader}>
-          <View style={styles.headerCell}>
-            <Text style={styles.headerText}>Pos.</Text>
-          </View>
-          <View style={[styles.headerCell, styles.nameHeaderCell]}>
-            <Text style={styles.headerText}>Naam</Text>
-          </View>
-          <View style={styles.headerCell}>
-            <Text style={styles.headerText}>Datum</Text>
-          </View>
-          <View style={styles.headerCell}>
-            <Text style={styles.headerText}>Tijd</Text>
-          </View>
+          <Text style={styles.headerText}>Schaatser</Text>
+          <Text style={styles.headerText}>Tijd</Text>
         </View>
 
         {/* Results List */}
@@ -380,6 +368,89 @@ export default function RankingsScreen() {
       {renderFilterModal('Niveau', skatingData.filterOptions.levels, filters.level, 'level')}
       {renderFilterModal('Categorie', skatingData.filterOptions.categories, filters.category, 'category')}
       {renderFilterModal('Baan', skatingData.filterOptions.tracks, filters.track, 'track')}
+
+      {/* Skater Detail Modal */}
+      <Modal
+        visible={selectedSkater !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedSkater(null)}
+      >
+        <TouchableOpacity 
+          style={styles.detailModalOverlay}
+          activeOpacity={1}
+          onPress={() => setSelectedSkater(null)}
+        >
+          <TouchableOpacity 
+            style={styles.detailModalContent}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            {selectedSkater && (
+              <>
+                <View style={styles.detailModalHeader}>
+                  <View style={styles.detailPositionBadge}>
+                    <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => setSelectedSkater(null)}>
+                    <X size={24} color="#666" />
+                  </TouchableOpacity>
+                </View>
+                
+                <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
+                
+                <View style={styles.detailInfoGrid}>
+                  <View style={styles.detailInfoItem}>
+                    <Text style={styles.detailInfoLabel}>Tijd</Text>
+                    <Text style={styles.detailInfoValue}>{selectedSkater.time}</Text>
+                  </View>
+                  <View style={styles.detailInfoItem}>
+                    <Text style={styles.detailInfoLabel}>ANS Tijd</Text>
+                    <Text style={styles.detailInfoValue}>{selectedSkater.ansTime}</Text>
+                  </View>
+                  <View style={styles.detailInfoItem}>
+                    <Text style={styles.detailInfoLabel}>Afstand</Text>
+                    <Text style={styles.detailInfoValue}>{selectedSkater.distance}m</Text>
+                  </View>
+                  <View style={styles.detailInfoItem}>
+                    <Text style={styles.detailInfoLabel}>Categorie</Text>
+                    <Text style={styles.detailInfoValue}>{selectedSkater.category}</Text>
+                  </View>
+                  <View style={styles.detailInfoItem}>
+                    <Text style={styles.detailInfoLabel}>Datum</Text>
+                    <Text style={styles.detailInfoValue}>{selectedSkater.date}</Text>
+                  </View>
+                  <View style={styles.detailInfoItem}>
+                    <Text style={styles.detailInfoLabel}>Baan</Text>
+                    <Text style={styles.detailInfoValue}>{selectedSkater.track}</Text>
+                  </View>
+                </View>
+                
+                {selectedSkater.change !== 0 && (
+                  <View style={styles.detailChangeSection}>
+                    <Text style={styles.detailChangeLabel}>Positie verandering</Text>
+                    <View style={styles.detailChangeContainer}>
+                      {selectedSkater.change > 0 ? (
+                        <ArrowUp size={16} color="#22C55E" />
+                      ) : (
+                        <ArrowDown size={16} color="#EF4444" />
+                      )}
+                      <Text
+                        style={[
+                          styles.detailChangeText,
+                          { color: selectedSkater.change > 0 ? '#22C55E' : '#EF4444' },
+                        ]}
+                      >
+                        {Math.abs(selectedSkater.change)} posities
+                      </Text>
+                    </View>
+                  </View>
+                )}
+              </>
+            )}
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
       </SafeAreaView>
     </View>
   );
@@ -515,7 +586,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1E293B',
     fontWeight: '500',
-    outlineStyle: 'none',
+    borderWidth: 0,
+    outline: 'none',
   },
   filtersGrid: {
     gap: 12,
@@ -600,6 +672,7 @@ const styles = StyleSheet.create({
   },
   resultsHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     backgroundColor: '#1E3A8A',
     paddingVertical: 16,
     paddingHorizontal: 20,
@@ -612,17 +685,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  headerCell: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  nameHeaderCell: {
-    flex: 2,
-    alignItems: 'flex-start',
-  },
   headerText: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -633,6 +698,8 @@ const styles = StyleSheet.create({
   },
   resultRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
@@ -642,45 +709,45 @@ const styles = StyleSheet.create({
   resultRowHovered: {
     backgroundColor: '#F8FAFC',
   },
-  resultCell: {
+  nameSection: {
     flex: 1,
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  nameCell: {
-    flex: 2,
-    alignItems: 'flex-start',
+  positionBadge: {
+    backgroundColor: '#1E3A8A',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 12,
+    minWidth: 32,
+    alignItems: 'center',
   },
-  positionText: {
-    fontSize: 17,
+  positionBadgeText: {
+    color: '#fff',
+    fontSize: 12,
     fontWeight: '700',
-    color: '#1E293B',
+  },
+  timeSection: {
+    alignItems: 'flex-end',
   },
   nameText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: '#1E293B',
+    marginBottom: 2,
   },
   categoryText: {
     fontSize: 11,
     color: '#64748B',
-    marginTop: 3,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
-  },
-  dateText: {
-    fontSize: 13,
-    color: '#1E293B',
-    fontWeight: '500',
-  },
-  trackText: {
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 3,
-    fontWeight: '500',
+    position: 'absolute',
+    top: 20,
   },
   timeText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     color: '#1E293B',
     fontFamily: 'monospace',
@@ -694,6 +761,96 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     marginLeft: 3,
+  },
+  detailModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  detailModalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 20,
+  },
+  detailModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  detailPositionBadge: {
+    backgroundColor: '#1E3A8A',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  detailPositionText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  detailNameText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  detailInfoGrid: {
+    gap: 16,
+  },
+  detailInfoItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+  },
+  detailInfoLabel: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  detailInfoValue: {
+    fontSize: 16,
+    color: '#1E293B',
+    fontWeight: '700',
+  },
+  detailChangeSection: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    alignItems: 'center',
+  },
+  detailChangeLabel: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  detailChangeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  detailChangeText: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 6,
   },
   pagination: {
     flexDirection: 'row',
