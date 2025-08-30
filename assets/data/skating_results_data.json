@@ -1,0 +1,880 @@
+{
+  "filterOptions": {
+    "distances": [
+      {
+        "value": "all",
+        "label": "Alle"
+      },
+      {
+        "value": "500",
+        "label": "500m"
+      },
+      {
+        "value": "1000",
+        "label": "1000m"
+      },
+      {
+        "value": "1500",
+        "label": "1500m"
+      },
+      {
+        "value": "3000",
+        "label": "3000m"
+      },
+      {
+        "value": "5000",
+        "label": "5000m"
+      },
+      {
+        "value": "10000",
+        "label": "10000m"
+      }
+    ],
+    "seasons": [
+      {
+        "value": "all",
+        "label": "Alle seizoenen"
+      },
+      {
+        "value": "2024-2025",
+        "label": "2024-2025"
+      },
+      {
+        "value": "2025-2026",
+        "label": "2025-2026"
+      }
+    ],
+    "geslachten": [
+      {
+        "value": "all",
+        "label": "Alle"
+      },
+      {
+        "value": "heren",
+        "label": "Heren"
+      },
+      {
+        "value": "dames",
+        "label": "Dames"
+      }
+    ],
+    "levels": [
+      {
+        "value": "all",
+        "label": "Alle niveaus"
+      },
+      {
+        "value": "junior",
+        "label": "Junioren"
+      },
+      {
+        "value": "senior",
+        "label": "Senioren"
+      }
+    ],
+    "categories": [
+      {
+        "value": "all",
+        "label": "Alle categorieën",
+        "gender": "all",
+        "level": "all"
+      },
+      {
+        "value": "HJA",
+        "label": "Heren Junioren A",
+        "gender": "heren",
+        "level": "junior"
+      },
+      {
+        "value": "HJB",
+        "label": "Heren Junioren B",
+        "gender": "heren",
+        "level": "junior"
+      },
+      {
+        "value": "HJC",
+        "label": "Heren Junioren C",
+        "gender": "heren",
+        "level": "junior"
+      },
+      {
+        "value": "HSA",
+        "label": "Heren Senioren A",
+        "gender": "heren",
+        "level": "senior"
+      },
+      {
+        "value": "HSB",
+        "label": "Heren Senioren B",
+        "gender": "heren",
+        "level": "senior"
+      },
+      {
+        "value": "HSC",
+        "label": "Heren Senioren C",
+        "gender": "heren",
+        "level": "senior"
+      },
+      {
+        "value": "DJA",
+        "label": "Dames Junioren A",
+        "gender": "dames",
+        "level": "junior"
+      },
+      {
+        "value": "DJB",
+        "label": "Dames Junioren B",
+        "gender": "dames",
+        "level": "junior"
+      },
+      {
+        "value": "DJC",
+        "label": "Dames Junioren C",
+        "gender": "dames",
+        "level": "junior"
+      },
+      {
+        "value": "DSA",
+        "label": "Dames Senioren A",
+        "gender": "dames",
+        "level": "senior"
+      },
+      {
+        "value": "DSB",
+        "label": "Dames Senioren B",
+        "gender": "dames",
+        "level": "senior"
+      },
+      {
+        "value": "DSC",
+        "label": "Dames Senioren C",
+        "gender": "dames",
+        "level": "senior"
+      }
+    ],
+    "tracks": [
+      {
+        "value": "all",
+        "label": "Alle banen"
+      },
+      {
+        "value": "Thialf",
+        "label": "Thialf"
+      },
+      {
+        "value": "De Uithof",
+        "label": "De Uithof"
+      },
+      {
+        "value": "Kardinge",
+        "label": "Kardinge"
+      },
+      {
+        "value": "IJsbaan Twente",
+        "label": "IJsbaan Twente"
+      }
+    ]
+  },
+  "mockResults": [
+    {
+      "id": 1,
+      "position": 1,
+      "name": "Thijs Wiersma",
+      "time": "1:13.15",
+      "ansTime": "01:10.45",
+      "change": 2,
+      "date": "08-07-2025",
+      "track": "De Uithof",
+      "category": "HJA",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 2,
+      "position": 2,
+      "name": "Jack Boekema",
+      "time": "1:15.24",
+      "ansTime": "01:11.23",
+      "change": -1,
+      "date": "07-07-2025",
+      "track": "Thialf",
+      "category": "HJB",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 3,
+      "position": 3,
+      "name": "Sem de Vries",
+      "time": "1:16.12",
+      "ansTime": "01:12.67",
+      "change": 3,
+      "date": "06-07-2025",
+      "track": "De Uithof",
+      "category": "HJC",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 4,
+      "position": 4,
+      "name": "Emma van der Berg",
+      "time": "1:18.45",
+      "ansTime": "01:14.32",
+      "change": 1,
+      "date": "08-07-2025",
+      "track": "Thialf",
+      "category": "DJA",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 5,
+      "position": 5,
+      "name": "Lars Jansen",
+      "time": "1:19.78",
+      "ansTime": "01:15.89",
+      "change": -2,
+      "date": "07-07-2025",
+      "track": "Kardinge",
+      "category": "HSA",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 6,
+      "position": 6,
+      "name": "Sophie Bakker",
+      "time": "1:21.34",
+      "ansTime": "01:17.45",
+      "change": 4,
+      "date": "06-07-2025",
+      "track": "De Uithof",
+      "category": "DSA",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 7,
+      "position": 7,
+      "name": "Daan Mulder",
+      "time": "1:22.67",
+      "ansTime": "01:18.23",
+      "change": 0,
+      "date": "08-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJB",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 8,
+      "position": 8,
+      "name": "Lisa de Jong",
+      "time": "1:24.12",
+      "ansTime": "01:19.78",
+      "change": -3,
+      "date": "07-07-2025",
+      "track": "Thialf",
+      "category": "DJB",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 9,
+      "position": 9,
+      "name": "Tim van Leeuwen",
+      "time": "1:25.89",
+      "ansTime": "01:21.34",
+      "change": 1,
+      "date": "06-07-2025",
+      "track": "De Uithof",
+      "category": "HSB",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 10,
+      "position": 10,
+      "name": "Mila Hendriks",
+      "time": "1:27.45",
+      "ansTime": "01:22.89",
+      "change": 2,
+      "date": "08-07-2025",
+      "track": "Kardinge",
+      "category": "DSB",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 11,
+      "position": 11,
+      "name": "Ruben Smit",
+      "time": "1:28.23",
+      "ansTime": "01:24.12",
+      "change": -1,
+      "date": "07-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJC",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 12,
+      "position": 12,
+      "name": "Anna Visser",
+      "time": "1:29.67",
+      "ansTime": "01:25.45",
+      "change": 3,
+      "date": "06-07-2025",
+      "track": "Thialf",
+      "category": "DJC",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 13,
+      "position": 13,
+      "name": "Bram Koster",
+      "time": "1:31.12",
+      "ansTime": "01:26.78",
+      "change": 0,
+      "date": "08-07-2025",
+      "track": "De Uithof",
+      "category": "HSC",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 14,
+      "position": 14,
+      "name": "Fleur Dijkstra",
+      "time": "1:32.89",
+      "ansTime": "01:28.23",
+      "change": -2,
+      "date": "07-07-2025",
+      "track": "Kardinge",
+      "category": "DSC",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 15,
+      "position": 15,
+      "name": "Joep van Dam",
+      "time": "1:34.45",
+      "ansTime": "01:29.67",
+      "change": 1,
+      "date": "06-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJA",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 16,
+      "position": 16,
+      "name": "Noa Peters",
+      "time": "1:35.78",
+      "ansTime": "01:31.12",
+      "change": 4,
+      "date": "08-07-2025",
+      "track": "Thialf",
+      "category": "DJA",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 17,
+      "position": 17,
+      "name": "Sven Groot",
+      "time": "1:37.23",
+      "ansTime": "01:32.45",
+      "change": -1,
+      "date": "07-07-2025",
+      "track": "De Uithof",
+      "category": "HSA",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 18,
+      "position": 18,
+      "name": "Isa Vermeulen",
+      "time": "1:38.67",
+      "ansTime": "01:33.89",
+      "change": 2,
+      "date": "06-07-2025",
+      "track": "Kardinge",
+      "category": "DSA",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 19,
+      "position": 19,
+      "name": "Max de Wit",
+      "time": "1:40.12",
+      "ansTime": "01:35.23",
+      "change": 0,
+      "date": "08-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJB",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 20,
+      "position": 20,
+      "name": "Lotte Brouwer",
+      "time": "1:41.89",
+      "ansTime": "01:36.67",
+      "change": -3,
+      "date": "07-07-2025",
+      "track": "Thialf",
+      "category": "DJB",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 21,
+      "position": 21,
+      "name": "Finn Scholten",
+      "time": "1:43.45",
+      "ansTime": "01:38.12",
+      "change": 1,
+      "date": "06-07-2025",
+      "track": "De Uithof",
+      "category": "HSB",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 22,
+      "position": 22,
+      "name": "Zara van Dijk",
+      "time": "1:44.78",
+      "ansTime": "01:39.45",
+      "change": 3,
+      "date": "08-07-2025",
+      "track": "Kardinge",
+      "category": "DSB",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 23,
+      "position": 23,
+      "name": "Noah Prins",
+      "time": "1:46.23",
+      "ansTime": "01:40.89",
+      "change": -2,
+      "date": "07-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJC",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 24,
+      "position": 24,
+      "name": "Eva Koning",
+      "time": "1:47.67",
+      "ansTime": "01:42.23",
+      "change": 0,
+      "date": "06-07-2025",
+      "track": "Thialf",
+      "category": "DJC",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 25,
+      "position": 25,
+      "name": "Jesse Hoekstra",
+      "time": "1:49.12",
+      "ansTime": "01:43.67",
+      "change": 1,
+      "date": "08-07-2025",
+      "track": "De Uithof",
+      "category": "HSC",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 26,
+      "position": 26,
+      "name": "Roos van der Meer",
+      "time": "1:50.89",
+      "ansTime": "01:45.12",
+      "change": -1,
+      "date": "07-07-2025",
+      "track": "Kardinge",
+      "category": "DSC",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 27,
+      "position": 27,
+      "name": "Luca Dekker",
+      "time": "1:52.34",
+      "ansTime": "01:46.78",
+      "change": 2,
+      "date": "06-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJA",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 28,
+      "position": 28,
+      "name": "Iris Mol",
+      "time": "1:53.78",
+      "ansTime": "01:48.23",
+      "change": -4,
+      "date": "08-07-2025",
+      "track": "Thialf",
+      "category": "DJA",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 29,
+      "position": 29,
+      "name": "Cas Willems",
+      "time": "1:55.23",
+      "ansTime": "01:49.67",
+      "change": 0,
+      "date": "07-07-2025",
+      "track": "De Uithof",
+      "category": "HSA",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 30,
+      "position": 30,
+      "name": "Luna Jacobs",
+      "time": "1:56.67",
+      "ansTime": "01:51.12",
+      "change": 1,
+      "date": "06-07-2025",
+      "track": "Kardinge",
+      "category": "DSA",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 31,
+      "position": 31,
+      "name": "Owen Verhoeven",
+      "time": "1:58.12",
+      "ansTime": "01:52.45",
+      "change": -1,
+      "date": "08-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJB",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 32,
+      "position": 32,
+      "name": "Jade Kuiper",
+      "time": "1:59.89",
+      "ansTime": "01:53.78",
+      "change": 3,
+      "date": "07-07-2025",
+      "track": "Thialf",
+      "category": "DJB",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 33,
+      "position": 33,
+      "name": "Stijn Roos",
+      "time": "2:01.34",
+      "ansTime": "01:55.23",
+      "change": -2,
+      "date": "06-07-2025",
+      "track": "De Uithof",
+      "category": "HSB",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 34,
+      "position": 34,
+      "name": "Fenna Schouten",
+      "time": "2:02.78",
+      "ansTime": "01:56.67",
+      "change": 2,
+      "date": "08-07-2025",
+      "track": "Kardinge",
+      "category": "DSB",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 35,
+      "position": 35,
+      "name": "Gijs Postma",
+      "time": "2:04.23",
+      "ansTime": "01:58.12",
+      "change": 0,
+      "date": "07-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJC",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 36,
+      "position": 36,
+      "name": "Tess Vos",
+      "time": "2:05.67",
+      "ansTime": "01:59.45",
+      "change": -1,
+      "date": "06-07-2025",
+      "track": "Thialf",
+      "category": "DJC",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 37,
+      "position": 37,
+      "name": "Mees Driessen",
+      "time": "2:07.12",
+      "ansTime": "02:00.89",
+      "change": 1,
+      "date": "08-07-2025",
+      "track": "De Uithof",
+      "category": "HSC",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 38,
+      "position": 38,
+      "name": "Saar Leenders",
+      "time": "2:08.89",
+      "ansTime": "02:02.23",
+      "change": -3,
+      "date": "07-07-2025",
+      "track": "Kardinge",
+      "category": "DSC",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 39,
+      "position": 39,
+      "name": "Koen Meijer",
+      "time": "2:10.34",
+      "ansTime": "02:03.67",
+      "change": 2,
+      "date": "06-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJA",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 40,
+      "position": 40,
+      "name": "Lara Huisman",
+      "time": "2:11.78",
+      "ansTime": "02:05.12",
+      "change": 0,
+      "date": "08-07-2025",
+      "track": "Thialf",
+      "category": "DJA",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 41,
+      "position": 41,
+      "name": "Tygo Bos",
+      "time": "2:13.23",
+      "ansTime": "02:06.45",
+      "change": -1,
+      "date": "07-07-2025",
+      "track": "De Uithof",
+      "category": "HSA",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1000
+    },
+    {
+      "id": 42,
+      "position": 42,
+      "name": "Vera Klaasen",
+      "time": "2:14.67",
+      "ansTime": "02:07.89",
+      "change": 1,
+      "date": "06-07-2025",
+      "track": "Kardinge",
+      "category": "DSA",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 43,
+      "position": 43,
+      "name": "Jelle Bosman",
+      "time": "2:16.12",
+      "ansTime": "02:09.23",
+      "change": 3,
+      "date": "08-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJB",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 500
+    },
+    {
+      "id": 44,
+      "position": 44,
+      "name": "Pip van Beek",
+      "time": "2:17.89",
+      "ansTime": "02:10.67",
+      "change": -2,
+      "date": "07-07-2025",
+      "track": "Thialf",
+      "category": "DJB",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 45,
+      "position": 45,
+      "name": "Ravi Patel",
+      "time": "2:19.34",
+      "ansTime": "02:12.12",
+      "change": 0,
+      "date": "06-07-2025",
+      "track": "De Uithof",
+      "category": "HSB",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 1500
+    },
+    {
+      "id": 46,
+      "position": 46,
+      "name": "Yara Zwart",
+      "time": "2:20.78",
+      "ansTime": "02:13.45",
+      "change": 1,
+      "date": "08-07-2025",
+      "track": "Kardinge",
+      "category": "DSB",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 47,
+      "position": 47,
+      "name": "Dex Hartman",
+      "time": "2:22.23",
+      "ansTime": "02:14.89",
+      "change": -1,
+      "date": "07-07-2025",
+      "track": "IJsbaan Twente",
+      "category": "HJC",
+      "geslachten": "heren",
+      "level": "junior",
+      "distance": 1000
+    },
+    {
+      "id": 48,
+      "position": 48,
+      "name": "Liv Janssen",
+      "time": "2:23.67",
+      "ansTime": "02:16.23",
+      "change": 2,
+      "date": "06-07-2025",
+      "track": "Thialf",
+      "category": "DJC",
+      "geslachten": "dames",
+      "level": "junior",
+      "distance": 1500
+    },
+    {
+      "id": 49,
+      "position": 49,
+      "name": "Timo Kramer",
+      "time": "2:25.12",
+      "ansTime": "02:17.67",
+      "change": -3,
+      "date": "08-07-2025",
+      "track": "De Uithof",
+      "category": "HSC",
+      "geslachten": "heren",
+      "level": "senior",
+      "distance": 500
+    },
+    {
+      "id": 50,
+      "position": 50,
+      "name": "Noor Willems",
+      "time": "2:26.89",
+      "ansTime": "02:19.12",
+      "change": 1,
+      "date": "07-07-2025",
+      "track": "Kardinge",
+      "category": "DSC",
+      "geslachten": "dames",
+      "level": "senior",
+      "distance": 1000
+    }
+  ]
+}

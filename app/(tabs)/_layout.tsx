@@ -1,0 +1,28 @@
+import { Tabs } from 'expo-router';
+import { Trophy } from 'lucide-react-native';
+
+export default function TabLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#FF6B35',
+        tabBarInactiveTintColor: '#666',
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopWidth: 1,
+          borderTopColor: '#e0e0e0',
+        },
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Ranglijsten',
+          tabBarIcon: ({ size, color }) => (
+            <Trophy size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}
