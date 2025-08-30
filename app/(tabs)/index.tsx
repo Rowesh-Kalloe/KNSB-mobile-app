@@ -9,6 +9,7 @@ import {
   Modal,
   FlatList,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import {
   Filter,
@@ -218,15 +219,18 @@ export default function RankingsScreen() {
       <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Ranglijsten</Text>
+        <Image 
+          source={require('@/assets/images/KNSB-logo.png')} 
+          style={styles.headerLogo}
+          resizeMode="contain"
+        />
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* Section Title */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Ranglijsten Langebaan</Text>
-          <Text style={styles.updateText}>Laatste update: 08-07-2025</Text>
-          <Text style={styles.updateText}>Volgende update: 15-07-2025</Text>
+          <Text style={styles.noticeText}>Let op: het kan even duren voordat de nieuwste tijden zichtbaar zijn.</Text>
         </View>
 
         {/* Filter Toggle */}
@@ -386,8 +390,10 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#1E3A8A',
-    paddingVertical: 20,
+    paddingVertical: 16,
     paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -397,17 +403,15 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '700',
-    textAlign: 'center',
-    letterSpacing: 0.5,
+  headerLogo: {
+    height: 50,
+    width: 200,
   },
   sectionHeader: {
     backgroundColor: '#fff',
     paddingVertical: 20,
     paddingHorizontal: 20,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -421,14 +425,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#EA580C',
-    marginBottom: 12,
+    marginBottom: 16,
     letterSpacing: 0.3,
+    textAlign: 'center',
   },
-  updateText: {
-    fontSize: 13,
+  noticeText: {
+    fontSize: 15,
     color: '#64748B',
-    marginBottom: 4,
-    fontWeight: '500',
+    fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 22,
   },
   filterToggle: {
     flexDirection: 'row',
