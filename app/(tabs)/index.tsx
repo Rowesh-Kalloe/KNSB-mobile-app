@@ -10,6 +10,7 @@ import {
   FlatList,
   SafeAreaView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {
   Filter,
@@ -21,6 +22,7 @@ import {
   X,
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
+import { SkatingAPI } from '@/services/api';
 
 interface Result {
   id: number;
@@ -52,6 +54,9 @@ export default function RankingsScreen() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
+  const [apiResults, setApiResults] = useState<Result[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [useApiData, setUseApiData] = useState(true);
   
   const [filters, setFilters] = useState({
     distance: 'all',
@@ -64,36 +69,74 @@ export default function RankingsScreen() {
 
   const resultsPerPage = 20;
 
+  // Fetch data from API
+  useEffect(() => {
+    const fetchResults = async () => {
+      setIsLoading(true);
+      try {
+        const apiFilters = {
+          distance: filters.distance,
+          season: filters.season,
+          gender: filters.geslachten,
+          level: filters.level,
+          category: filters.category,
+          track: filters.track,
+          search: searchQuery,
+        };
+        
+        const results = await SkatingAPI.getResults(apiFilters);
+        
+        if (results.length > 0) {
+          setApiResults(results);
+          setUseApiData(true);
+        } else {
+          // Fallback to local data if API returns no results
+          setUseApiData(false);
+        }
+      } catch (error) {
+        console.error('Failed to fetch from API, using local data:', error);
+        setUseApiData(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [filters, searchQuery]);
+
   // Filter results based on current filters and search
   const filteredResults = useMemo(() => {
-    let results = [...skatingData.mockResults];
+    let results = useApiData ? [...apiResults] : [...skatingData.mockResults];
 
-    // Apply search filter
-    if (searchQuery.trim()) {
-      results = results.filter(result =>
-        result.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+    // Only apply local filtering if using local data (API handles filtering server-side)
+    if (!useApiData) {
+      // Apply search filter
+      if (searchQuery.trim()) {
+        results = results.filter(result =>
+          result.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
 
-    // Apply dropdown filters
-    if (filters.distance !== 'all') {
-      results = results.filter(result => result.distance.toString() === filters.distance);
-    }
-    if (filters.geslachten !== 'all') {
-      results = results.filter(result => result.geslachten === filters.geslachten);
-    }
-    if (filters.level !== 'all') {
-      results = results.filter(result => result.level === filters.level);
-    }
-    if (filters.category !== 'all') {
-      results = results.filter(result => result.category === filters.category);
-    }
-    if (filters.track !== 'all') {
-      results = results.filter(result => result.track === filters.track);
+      // Apply dropdown filters
+      if (filters.distance !== 'all') {
+        results = results.filter(result => result.distance.toString() === filters.distance);
+      }
+      if (filters.geslachten !== 'all') {
+        results = results.filter(result => result.geslachten === filters.geslachten);
+      }
+      if (filters.level !== 'all') {
+        results = results.filter(result => result.level === filters.level);
+      }
+      if (filters.category !== 'all') {
+        results = results.filter(result => result.category === filters.category);
+      }
+      if (filters.track !== 'all') {
+        results = results.filter(result => result.track === filters.track);
+      }
     }
 
     return results;
-  }, [searchQuery, filters]);
+  }, [searchQuery, filters, apiResults, useApiData]);
 
   // Paginated results
   const paginatedResults = useMemo(() => {
@@ -327,18 +370,28 @@ export default function RankingsScreen() {
           <Text style={styles.headerText}>Tijd</Text>
         </View>
 
+        {/* Loading State */}
+        {isLoading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#1E3A8A" />
+            <Text style={styles.loadingText}>Resultaten laden...</Text>
+          </View>
+        )}
+
         {/* Results List */}
-        <FlatList
-          data={paginatedResults}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderResultItem}
-          style={styles.resultsList}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={false}
-        />
+        {!isLoading && (
+          <FlatList
+            data={paginatedResults}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderResultItem}
+            style={styles.resultsList}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+          />
+        )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {!isLoading && totalPages > 1 && (
           <View style={styles.pagination}>
             <TouchableOpacity
               style={[styles.pageButton, currentPage === 1 && styles.pageButtonDisabled]}
@@ -697,7 +750,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginRight: 16,
+    marginRight: 20,
   },
   resultsList: {
     flex: 1,
@@ -758,6 +811,18 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     marginLeft: 3,
+  },
+  loadingContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#64748B',
+    fontWeight: '500',
   },
   detailModalOverlay: {
     flex: 1,
