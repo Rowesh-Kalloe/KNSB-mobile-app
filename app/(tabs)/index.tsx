@@ -71,8 +71,10 @@ export default function RankingsScreen() {
 
   // Fetch data from API
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchResults = async () => {
-      setIsLoading(true);
+      if (isMounted) setIsLoading(true);
       try {
         const apiFilters = {
           distance: filters.distance,
@@ -87,21 +89,25 @@ export default function RankingsScreen() {
         const results = await SkatingAPI.getRaces(apiFilters);
         
         if (results.length > 0) {
-          setApiResults(results);
-          setUseApiData(true);
+          if (isMounted) setApiResults(results);
+          if (isMounted) setUseApiData(true);
         } else {
           // Fallback to local data if API returns no results
-          setUseApiData(false);
+          if (isMounted) setUseApiData(false);
         }
       } catch (error) {
         console.error('Failed to fetch from API, using local data:', error);
-        setUseApiData(false);
+        if (isMounted) setUseApiData(false);
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
 
     fetchResults();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [filters, searchQuery]);
 
   // Filter results based on current filters and search

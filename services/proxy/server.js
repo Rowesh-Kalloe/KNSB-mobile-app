@@ -7,7 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 app.use("/proxy", async (req, res) => {
   try {
     const targetPath = req.originalUrl.replace(/^\/proxy/, "");
@@ -16,27 +15,20 @@ app.use("/proxy", async (req, res) => {
     
     const fetchOptions = {
       method: req.method,
-    console.log('Proxying request to:', targetUrl);
-    
-    const response = await fetch(targetUrl, {
-      method: req.method,
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
       },
-    });
-    
     };
     
     if (req.method === 'POST' && req.body) {
-      fetchOptions.headers['Content-Type'] = 'application/json';
       fetchOptions.body = JSON.stringify(req.body);
     }
     
-    const r = await fetch(targetUrl, fetchOptions);
+    const response = await fetch(targetUrl, fetchOptions);
+    const body = await response.text();
     
-    
-    console.log('Proxy response status:', r.status, 'Content-Type:', r.headers.get('content-type'));
+    console.log('Proxy response status:', response.status, 'Content-Type:', response.headers.get('content-type'));
     
     res.status(response.status);
     res.set("Content-Type", response.headers.get("content-type") || "application/json");
@@ -49,8 +41,6 @@ app.use("/proxy", async (req, res) => {
     });
   }
 });
-
-app.use(express.json());
 
 const PORT = process.env.PORT || 8088;
 app.listen(PORT, () => {
