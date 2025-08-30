@@ -273,11 +273,7 @@ export default function RankingsScreen() {
       <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
-        <Image 
-          source={require('@/assets/images/KNSB-logo.png')} 
-          style={styles.headerLogo}
-          resizeMode="contain"
-        />
+        <Text style={styles.headerTitle}>KNSB</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -543,9 +539,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  headerLogo: {
-    height: 50,
-    width: 200,
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: 1,
   },
   sectionHeader: {
     backgroundColor: '#fff',
