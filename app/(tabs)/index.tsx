@@ -189,6 +189,9 @@ export default function RankingsScreen() {
       onPress={() => setSelectedSkater(item)}
     >
       <View style={styles.nameSection}>
+        <View style={styles.positionBadge}>
+          <Text style={styles.positionBadgeText}>{item.position}</Text>
+        </View>
         <Text style={styles.nameText}>{item.name}</Text>
       </View>
       <View style={styles.timeSection}>
@@ -706,6 +709,8 @@ const styles = StyleSheet.create({
   },
   nameSection: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   positionBadge: {
@@ -728,7 +733,7 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1E293B',
+    color: 'rgb(0, 57, 166)',
   },
   timeText: {
     fontSize: 16,
