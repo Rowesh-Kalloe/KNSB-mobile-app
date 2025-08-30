@@ -587,7 +587,6 @@ const styles = StyleSheet.create({
     color: '#1E293B',
     fontWeight: '500',
     borderWidth: 0,
-    outline: 'none',
   },
   filtersGrid: {
     gap: 12,
