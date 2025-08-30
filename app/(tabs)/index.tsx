@@ -130,11 +130,19 @@ export default function RankingsScreen() {
     <Modal
       visible={activeModal === filterKey}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={() => setActiveModal(null)}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+      <TouchableOpacity 
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={() => setActiveModal(null)}
+      >
+        <TouchableOpacity 
+          style={styles.modalContent}
+          activeOpacity={1}
+          onPress={(e) => e.stopPropagation()}
+        >
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{title}</Text>
             <TouchableOpacity onPress={() => setActiveModal(null)}>
@@ -163,8 +171,8 @@ export default function RankingsScreen() {
               </TouchableOpacity>
             )}
           />
-        </View>
-      </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 
@@ -500,8 +508,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
   searchInput: {
     flex: 1,
@@ -509,6 +515,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1E293B',
     fontWeight: '500',
+    outlineStyle: 'none',
   },
   filtersGrid: {
     gap: 12,
@@ -735,7 +742,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -746,11 +753,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -5,
+      height: -3,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    elevation: 15,
   },
   modalHeader: {
     flexDirection: 'row',
