@@ -84,7 +84,7 @@ export default function RankingsScreen() {
           search: searchQuery,
         };
         
-        const results = await SkatingAPI.getResults(apiFilters);
+        const results = await SkatingAPI.getRaces(apiFilters);
         
         if (results.length > 0) {
           setApiResults(results);

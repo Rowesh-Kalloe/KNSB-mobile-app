@@ -2,7 +2,9 @@ const BASE_URL = "https://knsb-example-api-cmg8eabdcwejh7ee.westeurope-01.azurew
 
 type FetchOpts = { 
   path: string; 
-  query?: Record<string, string | number | undefined> 
+  query?: Record<string, string | number | undefined>;
+  method?: 'GET' | 'POST';
+  body?: any;
 };
 
 function toQS(query?: Record<string, string | number | undefined>) {
@@ -15,19 +17,52 @@ function toQS(query?: Record<string, string | number | undefined>) {
   return s ? `?${s}` : "";
 }
 
-async function doFetch({ path, query }: FetchOpts) {
-  const url = `${BASE_URL}${path}${toQS(query)}`;
-  console.log('Attempting API call to:', url);
+function cleanFilters(filters: Record<string, any>) {
+  const cleaned: Record<string, any> = {};
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== 'all' && value !== '') {
+      cleaned[key] = value;
+    }
+  });
+  return cleaned;
+}
+
+async function checkContentTypeAndParseJson(response: Response, url: string) {
+  const contentType = response.headers.get('content-type') || '';
+  
+  if (!contentType.includes('application/json')) {
+    const bodyText = await response.text();
+    const truncatedBody = bodyText.substring(0, 300);
+    console.error(`Non-JSON response from ${url}:`, {
+      status: response.status,
+      contentType,
+      bodyPreview: truncatedBody
+    });
+    throw new Error(`Expected JSON but got ${contentType}. Status: ${response.status}`);
+  }
+  
+  return await response.json();
+}
+
+async function doFetch({ path, query, method = 'GET', body }: FetchOpts) {
+  const url = `${BASE_URL}${path}${method === 'GET' ? toQS(query) : ''}`;
+  console.log('Attempting API call to:', url, 'Method:', method);
   
   try {
-    const res = await fetch(url, {
-      method: "GET",
+    const fetchOptions: RequestInit = {
+      method,
       mode: "cors",
       headers: { 
         "Accept": "application/json",
-        "Content-Type": "application/json"
+        ...(method === 'POST' && { "Content-Type": "application/json" })
       },
-    });
+    };
+    
+    if (method === 'POST' && body) {
+      fetchOptions.body = JSON.stringify(body);
+    }
+    
+    const res = await fetch(url, fetchOptions);
     
     console.log('API response status:', res.status);
     
@@ -37,7 +72,7 @@ async function doFetch({ path, query }: FetchOpts) {
       throw new Error(`HTTP ${res.status}: ${errorText}`);
     }
     
-    const data = await res.json();
+    const data = await checkContentTypeAndParseJson(res, url);
     console.log('API response data:', data);
     return data;
   } catch (err: any) {
@@ -45,19 +80,29 @@ async function doFetch({ path, query }: FetchOpts) {
     
     // If CORS blocks, try local proxy fallback
     try {
-      const proxyUrl = `/api/proxy${path}${toQS(query)}`;
+      const proxyUrl = `/api/proxy${path}${method === 'GET' ? toQS(query) : ''}`;
       console.log('Trying proxy URL:', proxyUrl);
       
-      const res = await fetch(proxyUrl, { 
-        headers: { "Accept": "application/json" } 
-      });
+      const proxyOptions: RequestInit = {
+        method,
+        headers: { 
+          "Accept": "application/json",
+          ...(method === 'POST' && { "Content-Type": "application/json" })
+        },
+      };
+      
+      if (method === 'POST' && body) {
+        proxyOptions.body = JSON.stringify(body);
+      }
+      
+      const res = await fetch(proxyUrl, proxyOptions);
       
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(`Proxy HTTP ${res.status}: ${errorText}`);
       }
       
-      return await res.json();
+      return await checkContentTypeAndParseJson(res, proxyUrl);
     } catch (proxyErr: any) {
       console.error('Both direct and proxy fetch failed:', proxyErr?.message || proxyErr);
       throw new Error(`API unavailable: ${err?.message || err}`);
@@ -65,8 +110,25 @@ async function doFetch({ path, query }: FetchOpts) {
   }
 }
 
+async function httpGet(path: string, query?: Record<string, string | number | undefined>) {
+  return doFetch({ path, query, method: 'GET' });
+}
+
+async function httpPost(path: string, body?: any) {
+  return doFetch({ path, method: 'POST', body });
+}
+
 export const SkatingAPI = {
-  async getResults(filters: {
+  async health() {
+    try {
+      return await httpGet('/health');
+    } catch (error) {
+      console.error('Error in health check:', error);
+      return null;
+    }
+  },
+
+  async getRaces(filters: {
     distance?: string;
     season?: string;
     gender?: string;
@@ -74,47 +136,27 @@ export const SkatingAPI = {
     category?: string;
     track?: string;
     search?: string;
+    name?: string;
+    skaterId?: string;
   } = {}) {
     try {
-      const queryParams: Record<string, string | undefined> = {};
-      
-      if (filters.distance && filters.distance !== 'all') {
-        queryParams.distance = filters.distance;
-      }
-      if (filters.season && filters.season !== 'all') {
-        queryParams.season = filters.season;
-      }
-      if (filters.gender && filters.gender !== 'all') {
-        queryParams.gender = filters.gender;
-      }
-      if (filters.level && filters.level !== 'all') {
-        queryParams.level = filters.level;
-      }
-      if (filters.category && filters.category !== 'all') {
-        queryParams.category = filters.category;
-      }
-      if (filters.track && filters.track !== 'all') {
-        queryParams.track = filters.track;
-      }
-      if (filters.search && filters.search.trim()) {
-        queryParams.search = filters.search.trim();
-      }
+      const requestBody = cleanFilters({
+        name: filters.search || filters.name,
+        skaterId: filters.skaterId,
+        season: filters.season,
+        distance: filters.distance,
+        gender: filters.gender,
+        level: filters.level,
+        category: filters.category,
+        track: filters.track
+      });
 
-      const data = await doFetch({ path: "/results", query: queryParams });
-      return data.results || data || [];
+      console.log('getRaces request body:', requestBody);
+      const data = await httpPost('/getRaces', requestBody);
+      return data.races || data.results || data || [];
     } catch (error) {
-      console.error('Error in getResults:', error);
+      console.error('Error in getRaces:', error);
       return [];
-    }
-  },
-
-  async getSkaterDetails(skaterId: number) {
-    try {
-      const data = await doFetch({ path: `/skaters/${skaterId}` });
-      return data;
-    } catch (error) {
-      console.error('Error in getSkaterDetails:', error);
-      return null;
     }
   },
 
@@ -125,7 +167,9 @@ export const SkatingAPI = {
     distance?: string 
   }) {
     try {
-      const data = await doFetch({ path: "/getSeasonBest", query: params });
+      const requestBody = cleanFilters(params);
+      console.log('getSeasonBest request body:', requestBody);
+      const data = await httpPost('/getSeasonBest', requestBody);
       return data;
     } catch (error) {
       console.error('Error in getSeasonBest:', error);
@@ -133,18 +177,43 @@ export const SkatingAPI = {
     }
   },
 
-  async getRaces(params: { 
+  async getSeasonBestPoints(params: { 
     skaterId?: string; 
     name?: string; 
     season?: string; 
     distance?: string 
   }) {
     try {
-      const data = await doFetch({ path: "/getRaces", query: params });
-      return data.races || data || [];
+      const requestBody = cleanFilters(params);
+      console.log('getSeasonBestPoints request body:', requestBody);
+      const data = await httpPost('/getSeasonBestPoints', requestBody);
+      return data;
     } catch (error) {
-      console.error('Error in getRaces:', error);
-      return [];
+      console.error('Error in getSeasonBestPoints:', error);
+      return null;
+    }
+  },
+
+  // Keep this for backward compatibility, but it now calls getRaces
+  async getResults(filters: {
+    distance?: string;
+    season?: string;
+    gender?: string;
+    level?: string;
+    category?: string;
+    track?: string;
+    search?: string;
+  } = {}) {
+    return this.getRaces(filters);
+  },
+
+  async getSkaterDetails(skaterId: number) {
+    try {
+      const data = await httpGet(`/skaters/${skaterId}`);
+      return data;
+    } catch (error) {
+      console.error('Error in getSkaterDetails:', error);
+      return null;
     }
   }
 };
