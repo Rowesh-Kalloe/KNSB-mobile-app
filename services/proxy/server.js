@@ -7,11 +7,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/proxy", async (req, res) => {
+
+app.use("/proxy", async (req, res) => {
   try {
-    const targetPath = req.url.replace(/^\/api\/proxy/, "");
+    const targetPath = req.originalUrl.replace(/^\/proxy/, "");
     const targetUrl = `${TARGET}${targetPath}`;
+    console.log('Proxying request to:', targetUrl, 'Method:', req.method);
     
+    const fetchOptions = {
+      method: req.method,
     console.log('Proxying request to:', targetUrl);
     
     const response = await fetch(targetUrl, {
@@ -22,7 +26,17 @@ app.use("/api/proxy", async (req, res) => {
       },
     });
     
-    const body = await response.text();
+    };
+    
+    if (req.method === 'POST' && req.body) {
+      fetchOptions.headers['Content-Type'] = 'application/json';
+      fetchOptions.body = JSON.stringify(req.body);
+    }
+    
+    const r = await fetch(targetUrl, fetchOptions);
+    
+    
+    console.log('Proxy response status:', r.status, 'Content-Type:', r.headers.get('content-type'));
     
     res.status(response.status);
     res.set("Content-Type", response.headers.get("content-type") || "application/json");
@@ -35,6 +49,8 @@ app.use("/api/proxy", async (req, res) => {
     });
   }
 });
+
+app.use(express.json());
 
 const PORT = process.env.PORT || 8088;
 app.listen(PORT, () => {

@@ -1,4 +1,5 @@
 const BASE_URL = "https://knsb-example-api-cmg8eabdcwejh7ee.westeurope-01.azurewebsites.net";
+const DEV_PROXY = process.env.EXPO_PUBLIC_PROXY_URL || "http://127.0.0.1:8088";
 
 type FetchOpts = { 
   path: string; 
@@ -80,7 +81,7 @@ async function doFetch({ path, query, method = 'GET', body }: FetchOpts) {
     
     // If CORS blocks, try local proxy fallback
     try {
-      const proxyUrl = `/api/proxy${path}${method === 'GET' ? toQS(query) : ''}`;
+      const proxyUrl = `${DEV_PROXY}/proxy${path}${method === 'GET' ? toQS(query) : ''}`;
       console.log('Trying proxy URL:', proxyUrl);
       
       const proxyOptions: RequestInit = {
