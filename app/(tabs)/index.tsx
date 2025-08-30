@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#1E293B',
-    fontFamily: 'monospace',
+    fontFamily: 'System',
   },
   changeContainer: {
     flexDirection: 'row',
