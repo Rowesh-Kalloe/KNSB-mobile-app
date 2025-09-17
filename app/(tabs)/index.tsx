@@ -49,6 +49,7 @@ interface FilterOption {
 export default function RankingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [showDataSelection, setShowDataSelection] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
@@ -255,7 +256,7 @@ export default function RankingsScreen() {
           onPress={() => setShowFilters(!showFilters)}
         >
           <Filter size={20} color="#1E40AF" />
-          <Text style={styles.filterToggleText}>Filters</Text>
+          <Text style={styles.filterToggleText}>Zoekfilters</Text>
           {showFilters ? (
             <ChevronUp size={20} color="#1E40AF" />
           ) : (
@@ -267,7 +268,8 @@ export default function RankingsScreen() {
         {showFilters && (
           <View style={styles.filtersPanel}>
             <TouchableOpacity style={styles.clearButton} onPress={clearAllFilters}>
-              <Text style={styles.clearButtonText}>Wis alle filters</Text>
+              <X size={16} color="#475569" />
+              <Text style={styles.clearButtonText}>Wissen</Text>
             </TouchableOpacity>
 
             {/* Search */}
@@ -284,8 +286,6 @@ export default function RankingsScreen() {
             {/* Filter Dropdowns */}
             <View style={styles.filtersGrid}>
               {[
-                { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
-                { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
                 { key: 'geslachten', title: 'Geslacht', options: skatingData?.filterOptions?.geslachten || [] },
                 { key: 'level', title: 'Niveau', options: skatingData?.filterOptions?.levels || [] },
                 { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
@@ -309,6 +309,46 @@ export default function RankingsScreen() {
           </View>
         )}
 
+        {/* Data Selection Toggle */}
+        <TouchableOpacity
+          style={styles.filterToggle}
+          onPress={() => setShowDataSelection(!showDataSelection)}
+        >
+          <Filter size={20} color="#1E40AF" />
+          <Text style={styles.filterToggleText}>Gegevens selectie</Text>
+          {showDataSelection ? (
+            <ChevronUp size={20} color="#1E40AF" />
+          ) : (
+            <ChevronDown size={20} color="#1E40AF" />
+          )}
+        </TouchableOpacity>
+
+        {/* Data Selection Panel */}
+        {showDataSelection && (
+          <View style={styles.filtersPanel}>
+            {/* Data Selection Dropdowns */}
+            <View style={styles.filtersGrid}>
+              {[
+                { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
+                { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
+              ].map(({ key, title, options }) => (
+                <TouchableOpacity
+                  key={key}
+                  style={styles.filterDropdown}
+                  onPress={() => setActiveModal(key)}
+                >
+                  <View>
+                    <Text style={styles.filterLabel}>{title}</Text>
+                    <Text style={styles.filterValue}>
+                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
+                    </Text>
+                  </View>
+                  <ChevronDown size={16} color="#666" />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
         {/* Results Header */}
         <View style={styles.resultsHeader}>
           <View style={styles.headerLeft}>
@@ -565,6 +605,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   clearButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'flex-start',
     paddingVertical: 10,
     paddingHorizontal: 18,
@@ -584,6 +626,7 @@ const styles = StyleSheet.create({
     color: '#475569',
     fontSize: 14,
     fontWeight: '600',
+    marginLeft: 6,
   },
   searchContainer: {
     flexDirection: 'row',
