@@ -158,23 +158,24 @@ export default function StandingsScreen() {
               {/* Data Selection Dropdowns */}
               <View style={styles.filtersRow}>
                 {[
-                  { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
-                  { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
-                ].map(({ key, title, options }) => (
-                  <TouchableOpacity
-                    key={key}
-                    style={styles.filterDropdownSmall}
-                    onPress={() => setActiveModal(key)}
-                  >
-                    <View>
-                      <Text style={styles.filterLabel}>{title}</Text>
-                      <Text style={styles.filterValue}>
-                        {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                      </Text>
-                    </View>
-                    <ChevronDown size={16} color="#666" />
-                  </TouchableOpacity>
-                ))}
+                  {
+                    key: 'distance',
+                    title: 'Klassement',
+                    options: [
+                      { value: '500-1000', label: '500-1000' },
+                      { value: '500-1000-1500', label: '500-1000-1500' },
+                      { value: '500-1500-3000', label: '500-1500-3000' },
+                      { value: '500-1000-1500-3000', label: '500-1000-1500-3000' }
+                    ]
+                  },
+                  {
+                    key: 'season',
+                    title: 'Seizoen',
+                    options: [
+                      { value: '2023', label: '2023' },
+                      { value: '2024', label: '2024' }
+                    ]
+                  }
               </View>
             </View>
           )}
