@@ -10,6 +10,7 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {
   Filter,
@@ -234,7 +235,11 @@ export default function RankingsScreen() {
       <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>KNSB</Text>
+        <Image 
+          source={require('@/assets/images/knsb-logo.png')} 
+          style={styles.headerLogo}
+          resizeMode="contain"
+        />
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -477,7 +482,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#1E3A8A',
-    paddingVertical: 16,
+    paddingVertical: 20,
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -490,11 +495,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#fff',
-    letterSpacing: 1,
+  headerLogo: {
+    height: 40,
+    width: 120,
+    tintColor: '#fff',
   },
   sectionHeader: {
     backgroundColor: '#fff',
