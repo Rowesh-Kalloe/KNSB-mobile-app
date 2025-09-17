@@ -58,8 +58,8 @@ export default function RankingsScreen() {
   const [error, setError] = useState<string | null>(null);
   
   const [filters, setFilters] = useState({
-    distance: 'all',
-    season: 'all',
+    distance: '500',
+    season: '2025-2026',
     geslachten: 'all',
     level: 'all',
     category: 'all',
@@ -122,8 +122,8 @@ export default function RankingsScreen() {
 
   const clearAllFilters = () => {
     setFilters({
-      distance: 'all',
-      season: 'all',
+      distance: '500',
+      season: '2025-2026',
       geslachten: 'all',
       level: 'all',
       category: 'all',
