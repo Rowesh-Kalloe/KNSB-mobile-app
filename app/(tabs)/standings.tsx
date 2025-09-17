@@ -52,6 +52,7 @@ export default function StandingsScreen() {
   // Initialize component
   useEffect(() => {
     loadSeasonBestPoints();
+  }, []);
 
   const loadSeasonBestPoints = async () => {
     try {
@@ -86,6 +87,7 @@ export default function StandingsScreen() {
       setIsLoading(false);
     }
   };
+
   const clearAllFilters = () => {
     setFilters({
       distance: '500-1000',
@@ -542,8 +544,15 @@ const styles = StyleSheet.create({
   },
   filterValue: {
     fontSize: 15,
-    color: '#1E293B',
     color: 'rgb(0, 57, 166)',
+  },
+  nameSection: {
+    flex: 1,
+  },
+  nameText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B',
   },
   contentArea: {
     flex: 1,
