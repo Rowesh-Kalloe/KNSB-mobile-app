@@ -364,7 +364,6 @@ export default function StandingsScreen() {
           { value: '2024', label: '2024' }
         ], filters.season, 'season')}
       </SafeAreaView>
-    </View>
   );
 }
 
