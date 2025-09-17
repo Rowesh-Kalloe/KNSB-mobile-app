@@ -30,8 +30,8 @@ export default function StandingsScreen() {
   const [error, setError] = useState<string | null>(null);
   
   const [filters, setFilters] = useState({
-    distance: '500',
-    season: '2025-2026',
+    distance: '500-1000',
+    season: '2024',
     geslachten: 'all',
     level: 'all',
     category: 'all',
@@ -50,8 +50,8 @@ export default function StandingsScreen() {
 
   const clearAllFilters = () => {
     setFilters({
-      distance: '500',
-      season: '2025-2026',
+      distance: '500-1000',
+      season: '2024',
       geslachten: 'all',
       level: 'all',
       category: 'all',
@@ -102,8 +102,24 @@ export default function StandingsScreen() {
                   styles.modalOption,
                   currentValue === item.value && styles.modalOptionSelected,
                 ]}
-                onPress={() => updateFilter(filterKey, item.value)}
-              >
+                { 
+                  key: 'distance', 
+                  title: 'Klassement', 
+                  options: [
+                    { value: '500-1000', label: '500-1000' },
+                    { value: '500-1000-1500', label: '500-1000-1500' },
+                    { value: '500-1500-3000', label: '500-1500-3000' },
+                    { value: '500-1000-1500-3000', label: '500-1000-1500-3000' }
+                  ]
+                },
+                { 
+                  key: 'season', 
+                  title: 'Seizoen', 
+                  options: [
+                    { value: '2023', label: '2023' },
+                    { value: '2024', label: '2024' }
+                  ]
+                },
                 <Text
                   style={[
                     styles.modalOptionText,
@@ -197,7 +213,7 @@ export default function StandingsScreen() {
           {showFilters && (
             <View style={styles.filtersPanel}>
               <View style={styles.filterHeaderRow}>
-                <Text style={styles.refineText}>Verfijn resultaten</Text>
+                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || ''}
                 <TouchableOpacity style={styles.clearButton} onPress={clearAllFilters}>
                   <X size={16} color="#475569" />
                   <Text style={styles.clearButtonText}>Wissen</Text>
@@ -240,8 +256,16 @@ export default function StandingsScreen() {
         </ScrollView>
 
         {/* Filter Modals */}
-        {renderFilterModal('Afstand', skatingData?.filterOptions?.distances || [], filters.distance, 'distance')}
-        {renderFilterModal('Seizoen', skatingData?.filterOptions?.seasons || [], filters.season, 'season')}
+        {renderFilterModal('Klassement', [
+          { value: '500-1000', label: '500-1000' },
+          { value: '500-1000-1500', label: '500-1000-1500' },
+          { value: '500-1500-3000', label: '500-1500-3000' },
+          { value: '500-1000-1500-3000', label: '500-1000-1500-3000' }
+        ], filters.distance, 'distance')}
+        {renderFilterModal('Seizoen', [
+          { value: '2023', label: '2023' },
+          { value: '2024', label: '2024' }
+        ], filters.season, 'season')}
       </SafeAreaView>
     </View>
   );
