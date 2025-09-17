@@ -215,52 +215,6 @@ export default function StandingsScreen() {
                 />
               </View>
 
-              {/* Filter Dropdowns */}
-              <View style={styles.filtersGrid}>
-                {/* First row: Geslacht and Niveau */}
-                <View style={styles.filtersRow}>
-                  {[
-                    { key: 'geslachten', title: 'Geslacht', options: skatingData?.filterOptions?.geslachten || [] },
-                    { key: 'level', title: 'Niveau', options: skatingData?.filterOptions?.levels || [] },
-                  ].map(({ key, title, options }) => (
-                    <TouchableOpacity
-                      key={key}
-                      style={styles.filterDropdownSmall}
-                      onPress={() => setActiveModal(key)}
-                    >
-                      <View>
-                        <Text style={styles.filterLabel}>{title}</Text>
-                        <Text style={styles.filterValue}>
-                          {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                        </Text>
-                      </View>
-                      <ChevronDown size={16} color="#666" />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-                
-                {/* Second row: Categorie and Baan */}
-                <View style={styles.filtersRow}>
-                  {[
-                    { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
-                    { key: 'track', title: 'Baan', options: skatingData?.filterOptions?.tracks || [] },
-                  ].map(({ key, title, options }) => (
-                    <TouchableOpacity
-                      key={key}
-                      style={styles.filterDropdownSmall}
-                      onPress={() => setActiveModal(key)}
-                    >
-                      <View>
-                        <Text style={styles.filterLabel}>{title}</Text>
-                        <Text style={styles.filterValue}>
-                          {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                        </Text>
-                      </View>
-                      <ChevronDown size={16} color="#666" />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
             </View>
           )}
 
@@ -288,10 +242,6 @@ export default function StandingsScreen() {
         {/* Filter Modals */}
         {renderFilterModal('Afstand', skatingData?.filterOptions?.distances || [], filters.distance, 'distance')}
         {renderFilterModal('Seizoen', skatingData?.filterOptions?.seasons || [], filters.season, 'season')}
-        {renderFilterModal('Geslacht', skatingData?.filterOptions?.geslachten || [], filters.geslachten, 'geslachten')}
-        {renderFilterModal('Niveau', skatingData?.filterOptions?.levels || [], filters.level, 'level')}
-        {renderFilterModal('Categorie', skatingData?.filterOptions?.categories || [], filters.category, 'category')}
-        {renderFilterModal('Baan', skatingData?.filterOptions?.tracks || [], filters.track, 'track')}
       </SafeAreaView>
     </View>
   );
