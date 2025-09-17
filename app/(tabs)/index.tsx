@@ -267,14 +267,14 @@ export default function RankingsScreen() {
         {showDataSelection && (
           <View style={styles.filtersPanel}>
             {/* Data Selection Dropdowns */}
-            <View style={styles.filtersGrid}>
+            <View style={styles.filtersRow}>
               {[
                 { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
                 { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
               ].map(({ key, title, options }) => (
                 <TouchableOpacity
                   key={key}
-                  style={styles.filterDropdown}
+                  style={styles.filterDropdownSmall}
                   onPress={() => setActiveModal(key)}
                 >
                   <View>
@@ -639,6 +639,30 @@ const styles = StyleSheet.create({
   },
   filtersGrid: {
     gap: 12,
+  },
+  filtersRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  filterDropdownSmall: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 1,
+    elevation: 1,
   },
   filterDropdown: {
     width: '100%',
