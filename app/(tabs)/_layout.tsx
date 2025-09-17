@@ -19,8 +19,12 @@ export default function TabLayout() {
         options={{
           title: 'Ranglijsten',
           tabBarIcon: ({ size, color }) => (
-            <Trophy size={size} color={color} />
+            <Trophy size={28} color={color} />
           ),
+          tabBarLabelStyle: {
+            fontSize: 14,
+            fontWeight: '600',
+          },
         }}
       />
     </Tabs>

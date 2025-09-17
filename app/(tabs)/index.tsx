@@ -247,8 +247,48 @@ export default function RankingsScreen() {
         {/* Section Title */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Ranglijsten Langebaan</Text>
-          <Text style={styles.noticeText}>Let op: het kan even duren voordat de nieuwste tijden zichtbaar zijn.</Text>
         </View>
+
+        {/* Data Selection Toggle */}
+        <TouchableOpacity
+          style={styles.filterToggle}
+          onPress={() => setShowDataSelection(!showDataSelection)}
+        >
+          <Filter size={20} color="#1E40AF" />
+          <Text style={styles.filterToggleText}>Gegevens selectie</Text>
+          {showDataSelection ? (
+            <ChevronUp size={20} color="#1E40AF" />
+          ) : (
+            <ChevronDown size={20} color="#1E40AF" />
+          )}
+        </TouchableOpacity>
+
+        {/* Data Selection Panel */}
+        {showDataSelection && (
+          <View style={styles.filtersPanel}>
+            {/* Data Selection Dropdowns */}
+            <View style={styles.filtersGrid}>
+              {[
+                { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
+                { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
+              ].map(({ key, title, options }) => (
+                <TouchableOpacity
+                  key={key}
+                  style={styles.filterDropdown}
+                  onPress={() => setActiveModal(key)}
+                >
+                  <View>
+                    <Text style={styles.filterLabel}>{title}</Text>
+                    <Text style={styles.filterValue}>
+                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
+                    </Text>
+                  </View>
+                  <ChevronDown size={16} color="#666" />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* Filter Toggle */}
         <TouchableOpacity
@@ -290,47 +330,6 @@ export default function RankingsScreen() {
                 { key: 'level', title: 'Niveau', options: skatingData?.filterOptions?.levels || [] },
                 { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
                 { key: 'track', title: 'Baan', options: skatingData?.filterOptions?.tracks || [] },
-              ].map(({ key, title, options }) => (
-                <TouchableOpacity
-                  key={key}
-                  style={styles.filterDropdown}
-                  onPress={() => setActiveModal(key)}
-                >
-                  <View>
-                    <Text style={styles.filterLabel}>{title}</Text>
-                    <Text style={styles.filterValue}>
-                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                    </Text>
-                  </View>
-                  <ChevronDown size={16} color="#666" />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {/* Data Selection Toggle */}
-        <TouchableOpacity
-          style={styles.filterToggle}
-          onPress={() => setShowDataSelection(!showDataSelection)}
-        >
-          <Filter size={20} color="#1E40AF" />
-          <Text style={styles.filterToggleText}>Gegevens selectie</Text>
-          {showDataSelection ? (
-            <ChevronUp size={20} color="#1E40AF" />
-          ) : (
-            <ChevronDown size={20} color="#1E40AF" />
-          )}
-        </TouchableOpacity>
-
-        {/* Data Selection Panel */}
-        {showDataSelection && (
-          <View style={styles.filtersPanel}>
-            {/* Data Selection Dropdowns */}
-            <View style={styles.filtersGrid}>
-              {[
-                { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
-                { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
               ].map(({ key, title, options }) => (
                 <TouchableOpacity
                   key={key}
@@ -555,19 +554,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     color: '#EA580C',
-    marginBottom: 16,
+    marginBottom: 0,
     letterSpacing: 0.3,
     textAlign: 'center',
-  },
-  noticeText: {
-    fontSize: 15,
-    color: '#64748B',
-    fontWeight: '600',
-    textAlign: 'center',
-    lineHeight: 22,
   },
   filterToggle: {
     flexDirection: 'row',
