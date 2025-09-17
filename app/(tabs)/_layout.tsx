@@ -37,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="standings"
         options={{
-          title: 'Seizoen Beste',
+          title: 'Punten',
           tabBarIcon: ({ size, color }) => (
             <Award size={24} color={color} />
           ),
