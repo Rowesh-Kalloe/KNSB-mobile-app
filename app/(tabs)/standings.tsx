@@ -20,6 +20,16 @@ import {
   X,
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
+import { SkatingAPI } from '@/services/api';
+
+interface SeasonBestResult {
+  name: string;
+  distance500?: string;
+  distance1000?: string;
+  distance1500?: string;
+  distance3000?: string;
+  [key: string]: string | undefined;
+}
 
 export default function StandingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +38,7 @@ export default function StandingsScreen() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [seasonBestData, setSeasonBestData] = useState<SeasonBestResult[]>([]);
   
   const [filters, setFilters] = useState({
     distance: '500-1000',
@@ -40,14 +51,35 @@ export default function StandingsScreen() {
 
   // Initialize component
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setError(null);
-    }, 500);
-    
-    return () => clearTimeout(timer);
+    loadSeasonBestPoints();
   }, []);
 
+  const loadSeasonBestPoints = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await SkatingAPI.getSeasonBestPoints({
+        season: '2024',
+        distance: '500-1000'
+      });
+      
+      if (response && Array.isArray(response)) {
+        setSeasonBestData(response);
+      } else if (response && response.data && Array.isArray(response.data)) {
+        setSeasonBestData(response.data);
+      } else {
+        console.warn('Unexpected API response format:', response);
+        setSeasonBestData([]);
+      }
+    } catch (err: any) {
+      console.error('Error loading season best points:', err);
+      setError(err?.message || 'Er is een fout opgetreden bij het laden van de gegevens');
+      setSeasonBestData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const clearAllFilters = () => {
     setFilters({
       distance: '500-1000',
@@ -63,6 +95,32 @@ export default function StandingsScreen() {
   const updateFilter = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     setActiveModal(null);
+  };
+
+  const getDistanceColumns = () => {
+    const distances = filters.distance.split('-');
+    return distances.map(d => `distance${d}`);
+  };
+
+  const renderSeasonBestItem = ({ item }: { item: SeasonBestResult }) => {
+    const distanceColumns = getDistanceColumns();
+    
+    return (
+      <View style={styles.resultRow}>
+        <View style={styles.nameSection}>
+          <Text style={styles.nameText}>{item.name}</Text>
+        </View>
+        <View style={styles.timesSection}>
+          {distanceColumns.map((distanceKey, index) => (
+            <View key={distanceKey} style={styles.timeColumn}>
+              <Text style={styles.timeText}>
+                {item[distanceKey] || '-'}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    );
   };
 
   const renderFilterModal = (
@@ -237,25 +295,53 @@ export default function StandingsScreen() {
             </View>
           )}
 
-          {/* Content Area - Placeholder for now */}
-          <View style={styles.contentArea}>
-            {isLoading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#1E3A8A" />
-                <Text style={styles.loadingText}>Seizoen beste punten laden...</Text>
-              </View>
-            ) : (
-              <View style={styles.placeholderContainer}>
-                <Text style={styles.placeholderTitle}>Seizoen Beste Punten</Text>
-                <Text style={styles.placeholderText}>
-                  Hier komen de seizoen beste punten van alle schaatsers te staan.
+          {/* Results Header */}
+          <View style={styles.resultsHeader}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.headerText}>Naam</Text>
+            </View>
+            <View style={styles.headerRight}>
+              {filters.distance.split('-').map((distance) => (
+                <Text key={distance} style={[styles.headerText, styles.headerTextRight]}>
+                  {distance}m
                 </Text>
-                <Text style={styles.placeholderSubtext}>
-                  Data wordt binnenkort toegevoegd via de API.
-                </Text>
-              </View>
-            )}
+              ))}
+            </View>
           </View>
+
+          {/* Error State */}
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorTitle}>Er is een fout opgetreden</Text>
+              <Text style={styles.errorMessage}>{error}</Text>
+              <TouchableOpacity 
+                style={styles.errorButton}
+                onPress={loadSeasonBestPoints}
+              >
+                <Text style={styles.errorButtonText}>Opnieuw proberen</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Loading State */}
+          {isLoading && !error && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#1E3A8A" />
+              <Text style={styles.loadingText}>Seizoen beste punten laden...</Text>
+            </View>
+          )}
+
+          {/* Results List */}
+          {!isLoading && !error && (
+            <FlatList
+              data={seasonBestData}
+              keyExtractor={(item, index) => `${item.name}-${index}`}
+              renderItem={renderSeasonBestItem}
+              style={styles.resultsList}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={false}
+            />
+          )}
         </ScrollView>
 
         {/* Filter Modals */}
@@ -451,7 +537,7 @@ const styles = StyleSheet.create({
   filterValue: {
     fontSize: 15,
     color: '#1E293B',
-    fontWeight: '600',
+    color: 'rgb(0, 57, 166)',
   },
   contentArea: {
     flex: 1,
@@ -496,6 +582,107 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#1E3A8A',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginRight: 20,
+  },
+  headerTextRight: {
+    textAlign: 'center',
+    marginRight: 0,
+    minWidth: 60,
+  },
+  resultsList: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  resultRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    backgroundColor: '#fff',
+  },
+  timesSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeColumn: {
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  timeText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    fontFamily: 'System',
+  },
+  errorContainer: {
+    backgroundColor: '#FEF2F2',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    borderRadius: 12,
+    margin: 20,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#DC2626',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#7F1D1D',
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  errorButton: {
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  errorButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
