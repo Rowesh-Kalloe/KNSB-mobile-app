@@ -12,6 +12,9 @@ export default function TabLayout() {
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#e0e0e0',
+          height: 65,
+          paddingBottom: 8,
+          paddingTop: 8,
         },
       }}>
       <Tabs.Screen
@@ -19,10 +22,10 @@ export default function TabLayout() {
         options={{
           title: 'Ranglijsten',
           tabBarIcon: ({ size, color }) => (
-            <Trophy size={28} color={color} />
+            <Trophy size={24} color={color} />
           ),
           tabBarLabelStyle: {
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: '600',
           },
         }}
