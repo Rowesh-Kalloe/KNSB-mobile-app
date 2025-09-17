@@ -52,16 +52,22 @@ export default function StandingsScreen() {
   // Initialize component
   useEffect(() => {
     loadSeasonBestPoints();
-  }, []);
 
   const loadSeasonBestPoints = async () => {
     try {
       setIsLoading(true);
       setError(null);
       
+      // Parse distance filter into array of numbers
+      const distanceNumbers = filters.distance.split('-').map(d => parseInt(d, 10));
+      
+      // Parse season filter into array of numbers
+      const seasonNumbers = [parseInt(filters.season, 10)];
+      
       const response = await SkatingAPI.getSeasonBestPoints({
-        season: '2024',
-        distance: '500-1000'
+        person_id: [],
+        season: seasonNumbers,
+        distance: distanceNumbers
       });
       
       if (response && Array.isArray(response)) {
