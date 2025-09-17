@@ -48,7 +48,6 @@ interface FilterOption {
 export default function RankingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [showANSTime, setShowANSTime] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
@@ -207,9 +206,9 @@ export default function RankingsScreen() {
       </View>
       <View style={styles.timeSection}>
         <Text style={styles.timeText}>
-          {showANSTime ? item.ansTime : item.time}
+          {item.ansTime}
         </Text>
-        {showANSTime && item.change !== 0 && (
+        {item.change !== 0 && (
           <View style={styles.changeContainer}>
             {item.change > 0 ? (
               <ArrowUp size={12} color="#22C55E" />
@@ -305,33 +304,13 @@ export default function RankingsScreen() {
           </View>
         )}
 
-        {/* Time Toggle */}
-        <View style={styles.timeToggle}>
-          <TouchableOpacity
-            style={[styles.toggleButton, !showANSTime && styles.toggleButtonActive]}
-            onPress={() => setShowANSTime(false)}
-          >
-            <Text style={[styles.toggleText, !showANSTime && styles.toggleTextActive]}>
-              Normale tijd
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.toggleButton, showANSTime && styles.toggleButtonActive]}
-            onPress={() => setShowANSTime(true)}
-          >
-            <Text style={[styles.toggleText, showANSTime && styles.toggleTextActive]}>
-              ANS tijd
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         {/* Results Header */}
         <View style={styles.resultsHeader}>
           <View style={styles.headerLeft}>
             <Text style={styles.headerText}>Pos.</Text>
             <Text style={styles.headerText}>Naam</Text>
           </View>
-          <Text style={styles.headerText}>Tijd</Text>
+          <Text style={styles.headerText}>ANS tijd</Text>
         </View>
 
         {/* Error State */}
@@ -433,10 +412,6 @@ export default function RankingsScreen() {
                 <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
                 
                 <View style={styles.detailInfoGrid}>
-                  <View style={styles.detailInfoItem}>
-                    <Text style={styles.detailInfoLabel}>Tijd</Text>
-                    <Text style={styles.detailInfoValue}>{selectedSkater.time}</Text>
-                  </View>
                   <View style={styles.detailInfoItem}>
                     <Text style={styles.detailInfoLabel}>ANS Tijd</Text>
                     <Text style={styles.detailInfoValue}>{selectedSkater.ansTime}</Text>
@@ -658,51 +633,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#1E293B',
     fontWeight: '600',
-  },
-  timeToggle: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    marginHorizontal: 6,
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  toggleButtonActive: {
-    backgroundColor: '#1E3A8A',
-    borderColor: '#1E3A8A',
-    shadowColor: '#1E3A8A',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  toggleText: {
-    textAlign: 'center',
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#475569',
-  },
-  toggleTextActive: {
-    color: '#fff',
   },
   resultsHeader: {
     flexDirection: 'row',
