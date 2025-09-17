@@ -102,24 +102,8 @@ export default function StandingsScreen() {
                   styles.modalOption,
                   currentValue === item.value && styles.modalOptionSelected,
                 ]}
-                { 
-                  key: 'distance', 
-                  title: 'Klassement', 
-                  options: [
-                    { value: '500-1000', label: '500-1000' },
-                    { value: '500-1000-1500', label: '500-1000-1500' },
-                    { value: '500-1500-3000', label: '500-1500-3000' },
-                    { value: '500-1000-1500-3000', label: '500-1000-1500-3000' }
-                  ]
-                },
-                { 
-                  key: 'season', 
-                  title: 'Seizoen', 
-                  options: [
-                    { value: '2023', label: '2023' },
-                    { value: '2024', label: '2024' }
-                  ]
-                },
+                onPress={() => updateFilter(filterKey, item.value)}
+              >
                 <Text
                   style={[
                     styles.modalOptionText,
@@ -213,7 +197,7 @@ export default function StandingsScreen() {
           {showFilters && (
             <View style={styles.filtersPanel}>
               <View style={styles.filterHeaderRow}>
-                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || ''}
+                <Text style={styles.refineText}>Verfijn zoekresultaten</Text>
                 <TouchableOpacity style={styles.clearButton} onPress={clearAllFilters}>
                   <X size={16} color="#475569" />
                   <Text style={styles.clearButtonText}>Wissen</Text>
