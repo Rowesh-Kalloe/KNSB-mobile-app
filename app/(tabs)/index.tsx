@@ -307,10 +307,13 @@ export default function RankingsScreen() {
         {/* Filters Panel */}
         {showFilters && (
           <View style={styles.filtersPanel}>
-            <TouchableOpacity style={styles.clearButton} onPress={clearAllFilters}>
-              <X size={16} color="#475569" />
-              <Text style={styles.clearButtonText}>Wissen</Text>
-            </TouchableOpacity>
+            <View style={styles.filterHeaderRow}>
+              <Text style={styles.refineText}>Verfijn resultaten</Text>
+              <TouchableOpacity style={styles.clearButton} onPress={clearAllFilters}>
+                <X size={16} color="#475569" />
+                <Text style={styles.clearButtonText}>Wissen</Text>
+              </TouchableOpacity>
+            </View>
 
             {/* Search */}
             <View style={styles.searchContainer}>
@@ -325,26 +328,49 @@ export default function RankingsScreen() {
 
             {/* Filter Dropdowns */}
             <View style={styles.filtersGrid}>
-              {[
-                { key: 'geslachten', title: 'Geslacht', options: skatingData?.filterOptions?.geslachten || [] },
-                { key: 'level', title: 'Niveau', options: skatingData?.filterOptions?.levels || [] },
-                { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
-                { key: 'track', title: 'Baan', options: skatingData?.filterOptions?.tracks || [] },
-              ].map(({ key, title, options }) => (
-                <TouchableOpacity
-                  key={key}
-                  style={styles.filterDropdown}
-                  onPress={() => setActiveModal(key)}
-                >
-                  <View>
-                    <Text style={styles.filterLabel}>{title}</Text>
-                    <Text style={styles.filterValue}>
-                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                    </Text>
-                  </View>
-                  <ChevronDown size={16} color="#666" />
-                </TouchableOpacity>
-              ))}
+              {/* First row: Geslacht and Niveau */}
+              <View style={styles.filtersRow}>
+                {[
+                  { key: 'geslachten', title: 'Geslacht', options: skatingData?.filterOptions?.geslachten || [] },
+                  { key: 'level', title: 'Niveau', options: skatingData?.filterOptions?.levels || [] },
+                ].map(({ key, title, options }) => (
+                  <TouchableOpacity
+                    key={key}
+                    style={styles.filterDropdownSmall}
+                    onPress={() => setActiveModal(key)}
+                  >
+                    <View>
+                      <Text style={styles.filterLabel}>{title}</Text>
+                      <Text style={styles.filterValue}>
+                        {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
+                      </Text>
+                    </View>
+                    <ChevronDown size={16} color="#666" />
+                  </TouchableOpacity>
+                ))}
+              </View>
+              
+              {/* Second row: Categorie and Baan */}
+              <View style={styles.filtersRow}>
+                {[
+                  { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
+                  { key: 'track', title: 'Baan', options: skatingData?.filterOptions?.tracks || [] },
+                ].map(({ key, title, options }) => (
+                  <TouchableOpacity
+                    key={key}
+                    style={styles.filterDropdownSmall}
+                    onPress={() => setActiveModal(key)}
+                  >
+                    <View>
+                      <Text style={styles.filterLabel}>{title}</Text>
+                      <Text style={styles.filterValue}>
+                        {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
+                      </Text>
+                    </View>
+                    <ChevronDown size={16} color="#666" />
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
           </View>
         )}
@@ -599,12 +625,10 @@ const styles = StyleSheet.create({
   clearButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
     paddingVertical: 10,
     paddingHorizontal: 18,
     backgroundColor: '#F1F5F9',
     borderRadius: 8,
-    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -639,6 +663,17 @@ const styles = StyleSheet.create({
   },
   filtersGrid: {
     gap: 12,
+  },
+  filterHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  refineText: {
+    fontSize: 16,
+    color: '#1E293B',
+    fontWeight: '600',
   },
   filtersRow: {
     flexDirection: 'row',
