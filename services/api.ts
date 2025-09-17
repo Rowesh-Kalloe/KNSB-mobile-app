@@ -1,5 +1,5 @@
 const BASE_URL = "https://knsb-example-api-cmg8eabdcwejh7ee.westeurope-01.azurewebsites.net";
-const DEV_PROXY = process.env.EXPO_PUBLIC_PROXY_URL || "http://127.0.0.1:8088";
+const DEV_PROXY = process.env.EXPO_PUBLIC_PROXY_URL || "http://localhost:8088";
 
 type FetchOpts = { 
   path: string; 

@@ -32,7 +32,7 @@ echo "✅ Expo CLI version: $(expo --version)"
 # Create .env file if it doesn't exist
 if [ ! -f .env ]; then
     echo "🔧 Creating .env file..."
-    echo "EXPO_PUBLIC_PROXY_URL=http://127.0.0.1:8088" > .env
+    echo "EXPO_PUBLIC_PROXY_URL=http://localhost:8088" > .env
 fi
 
 echo "🎉 Setup complete! You can now run:"
