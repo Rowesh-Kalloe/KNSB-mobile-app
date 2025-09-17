@@ -310,7 +310,7 @@ export default function RankingsScreen() {
             <Text style={styles.headerText}>Pos.</Text>
             <Text style={styles.headerText}>Naam</Text>
           </View>
-          <Text style={styles.headerText}>ANS tijd</Text>
+          <Text style={[styles.headerText, styles.headerTextRight]}>ANS TIJD</Text>
         </View>
 
         {/* Error State */}
@@ -661,6 +661,10 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginRight: 20,
+  },
+  headerTextRight: {
+    textAlign: 'right',
+    marginRight: 0,
   },
   resultsList: {
     flex: 1,
