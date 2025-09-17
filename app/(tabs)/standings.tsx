@@ -176,6 +176,21 @@ export default function StandingsScreen() {
                       { value: '2024', label: '2024' }
                     ]
                   }
+                ].map((filter) => (
+                  <TouchableOpacity
+                    key={filter.key}
+                    style={styles.filterDropdownSmall}
+                    onPress={() => setActiveModal(filter.key)}
+                  >
+                    <View>
+                      <Text style={styles.filterLabel}>{filter.title}</Text>
+                      <Text style={styles.filterValue}>
+                        {filter.options.find(opt => opt.value === filters[filter.key as keyof typeof filters])?.label || filters[filter.key as keyof typeof filters]}
+                      </Text>
+                    </View>
+                    <ChevronDown size={16} color="#64748B" />
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
           )}
