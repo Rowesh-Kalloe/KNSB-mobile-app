@@ -46,6 +46,16 @@ export default function StandingsScreen() {
     track: 'all',
   });
 
+  // Filter the API data based on search query
+  const filteredSeasonBestData = React.useMemo(() => {
+    if (!searchQuery.trim()) {
+      return seasonBestData;
+    }
+    
+    return seasonBestData.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [seasonBestData, searchQuery]);
   // Initialize component
   useEffect(() => {
     loadSeasonBestPoints();
@@ -352,7 +362,7 @@ export default function StandingsScreen() {
           {/* Results List */}
           {!isLoading && !error && (
             <FlatList
-              data={seasonBestData}
+              data={filteredSeasonBestData}
               keyExtractor={(item, index) => `${item.name}-${index}`}
               renderItem={renderSeasonBestItem}
               style={styles.resultsList}
