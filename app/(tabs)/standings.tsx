@@ -531,9 +531,9 @@ export default function StandingsScreen() {
             </TouchableOpacity>
           </TouchableOpacity>
         </Modal>
-    </SafeAreaView>
-  </View>
-);
+      </SafeAreaView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -1022,6 +1022,13 @@ const styles = StyleSheet.create({
   timesLoadingText: {
     marginLeft: 8,
     fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  timesTableContainer: {
+    marginTop: 16,
+  },
+  timesTableTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
@@ -1030,12 +1037,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1E293B',
-    marginLeft: 6, // ruimte tussen trophy en tekst
-  },
-    fontWeight: '700',
-    color: '#1E293B',
-    marginBottom: 12,
-    textAlign: 'center',
+    marginLeft: 6,
   },
   timesTable: {
     borderRadius: 12,
