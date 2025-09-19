@@ -503,27 +503,19 @@ export default function RankingsScreen() {
                 ))}
               </View>
               
-              {/* Second row: Categorie and Baan */}
-              <View style={styles.filtersRow}>
-                {[
-                  { key: 'category', title: 'Categorie', options: skatingData?.filterOptions?.categories || [] },
-                  { key: 'track', title: 'Baan', options: skatingData?.filterOptions?.tracks || [] },
-                ].map(({ key, title, options }) => (
-                  <TouchableOpacity
-                    key={key}
-                    style={styles.filterDropdownSmall}
-                    onPress={() => setActiveModal(key)}
-                  >
-                    <View>
-                      <Text style={styles.filterLabel}>{title}</Text>
-                      <Text style={styles.filterValue}>
-                        {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                      </Text>
-                    </View>
-                    <ChevronDown size={16} color="#666" />
-                  </TouchableOpacity>
-                ))}
-              </View>
+              {/* Second row: Categorie (full width) */}
+              <TouchableOpacity
+                style={styles.filterDropdown}
+                onPress={() => setActiveModal('category')}
+              >
+                <View>
+                  <Text style={styles.filterLabel}>Categorie</Text>
+                  <Text style={styles.filterValue}>
+                    {(skatingData?.filterOptions?.categories || []).find(opt => opt.value === filters.category)?.label || 'Alle'}
+                  </Text>
+                </View>
+                <ChevronDown size={16} color="#666" />
+              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -628,7 +620,6 @@ export default function RankingsScreen() {
       {renderFilterModal('Geslacht', skatingData?.filterOptions?.geslachten || [], filters.geslachten, 'geslachten')}
       {renderFilterModal('Niveau', skatingData?.filterOptions?.levels || [], filters.level, 'level')}
       {renderFilterModal('Categorie', skatingData?.filterOptions?.categories || [], filters.category, 'category')}
-      {renderFilterModal('Baan', skatingData?.filterOptions?.tracks || [], filters.track, 'track')}
 
       {/* Skater Detail Modal */}
       <Modal
