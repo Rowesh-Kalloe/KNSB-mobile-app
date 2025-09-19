@@ -182,6 +182,15 @@ export default function RankingsScreen() {
   const filteredResults = useMemo(() => {
     let filteredData = [...results];
 
+    // Debug logging
+    console.log('=== FILTER DEBUG ===');
+    console.log('Total results:', results.length);
+    console.log('Current filters:', filters);
+    console.log('Sample result data:', results[0]);
+    if (results.length > 0) {
+      console.log('Gender values in data:', [...new Set(results.map(r => r.geslachten))]);
+    }
+
     // Apply search filter
     if (searchQuery.trim()) {
       filteredData = filteredData.filter(result =>
@@ -198,7 +207,10 @@ export default function RankingsScreen() {
       };
       
       const targetGender = genderMap[filters.geslachten] || filters.geslachten;
+      console.log('Gender filter - looking for:', targetGender);
+      console.log('Before gender filter:', filteredData.length);
       filteredData = filteredData.filter(result => result.geslachten === targetGender);
+      console.log('After gender filter:', filteredData.length);
     }
     
     // Apply level filter
