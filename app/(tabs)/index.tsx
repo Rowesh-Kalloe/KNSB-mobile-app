@@ -90,9 +90,14 @@ export default function RankingsScreen() {
       setIsLoading(true);
       setError(null);
       
+      // Send current filter values to API to see if it can filter server-side
       const response = await SkatingAPI.getRaces({
         distance: filters.distance,
-        season: filters.season
+        season: filters.season,
+        gender: filters.geslachten !== 'all' ? filters.geslachten : undefined,
+        level: filters.level !== 'all' ? filters.level : undefined,
+        category: filters.category !== 'all' ? filters.category : undefined,
+        track: filters.track !== 'all' ? filters.track : undefined
       });
       
       if (response && Array.isArray(response)) {
@@ -105,13 +110,15 @@ export default function RankingsScreen() {
           ansTime: formatMillisecondsToTime(item.ans_time || 0),
           change: item.change || 0,
           date: item.date || '',
-          track: item.track || '',
-          category: item.category || '',
-          geslachten: item.geslachten || '',
+          track: item.city || item.track || item.baan || '',
+          category: item.cat || item.category || item.categorie || '',
+          geslachten: item.gender || item.geslachten || '',
           level: item.level || '',
           distance: parseInt(filters.distance) || 500,
           person_id: item.person_id || 0
         }));
+        
+        console.log('Processed results sample:', processedResults[0]);
         setResults(processedResults);
       } else {
         console.warn('Unexpected API response format:', response);

@@ -146,10 +146,17 @@ export const SkatingAPI = {
         skaterId: filters.skaterId,
         season: filters.season ? [parseInt(filters.season, 10)] : undefined,
         distance: filters.distance ? [parseInt(filters.distance, 10)] : undefined,
-        gender: filters.gender,
-        level: filters.level,
-        category: filters.category,
-        track: filters.track
+        // Include all possible filter parameters the API might need
+        gender: filters.gender || undefined,
+        level: filters.level || undefined,
+        category: filters.category || undefined,
+        cat: filters.category || undefined, // Try alternative field name
+        track: filters.track || undefined,
+        city: filters.track || undefined, // Try alternative field name
+        // Add any other potential field names
+        geslachten: filters.gender || undefined,
+        categorie: filters.category || undefined,
+        baan: filters.track || undefined
       });
 
       console.log('getRaces request body:', requestBody);
