@@ -144,8 +144,8 @@ export const SkatingAPI = {
       const requestBody = cleanFilters({
         name: filters.search || filters.name,
         skaterId: filters.skaterId,
-        season: filters.season,
-        distance: filters.distance,
+        season: filters.season ? [parseInt(filters.season, 10)] : undefined,
+        distance: filters.distance ? [parseInt(filters.distance, 10)] : undefined,
         gender: filters.gender,
         level: filters.level,
         category: filters.category,
