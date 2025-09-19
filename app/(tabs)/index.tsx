@@ -20,6 +20,7 @@ import {
   ArrowUp,
   ArrowDown,
   X,
+  Database,
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
 // import { SkatingAPI } from '@/services/api';
@@ -448,8 +449,24 @@ export default function RankingsScreen() {
           </View>
         )}
 
+        {/* No Data State */}
+        {!isLoading && !error && filteredResults.length === 0 && (
+          <View style={styles.noDataContainer}>
+            <View style={styles.noDataIconContainer}>
+              <Database size={48} color="#94A3B8" />
+            </View>
+            <Text style={styles.noDataTitle}>Geen gegevens beschikbaar</Text>
+            <Text style={styles.noDataMessage}>
+              Er zijn geen gegevens beschikbaar voor de geselecteerde filters.
+            </Text>
+            <Text style={styles.noDataSubtext}>
+              Probeer andere filteropties te selecteren.
+            </Text>
+          </View>
+        )}
+
         {/* Results List */}
-        {!isLoading && (
+        {!isLoading && !error && filteredResults.length > 0 && (
           <FlatList
             data={paginatedResults}
             keyExtractor={(item) => item.id.toString()}
@@ -461,7 +478,7 @@ export default function RankingsScreen() {
         )}
 
         {/* Pagination */}
-        {!isLoading && totalPages > 1 && (
+        {!isLoading && !error && filteredResults.length > 0 && totalPages > 1 && (
           <View style={styles.pagination}>
             <TouchableOpacity
               style={[styles.pageButton, currentPage === 1 && styles.pageButtonDisabled]}
@@ -923,6 +940,57 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+  },
+  noDataContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    margin: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  noDataIconContainer: {
+    backgroundColor: '#F1F5F9',
+    borderRadius: 32,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  noDataTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  noDataMessage: {
+    fontSize: 16,
+    color: '#64748B',
+    marginBottom: 8,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  noDataSubtext: {
+    fontSize: 14,
+    color: '#94A3B8',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   detailModalOverlay: {
     flex: 1,
