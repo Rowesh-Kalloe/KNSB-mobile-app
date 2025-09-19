@@ -1031,11 +1031,12 @@ const styles = StyleSheet.create({
   timesTableTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 8,
   },
   timesTableTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
     color: '#1E293B',
     marginLeft: 6,
   },
