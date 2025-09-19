@@ -651,7 +651,16 @@ export default function RankingsScreen() {
                 
                 <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
                 
-                <Text style={styles.detailCategoryText}>{selectedSkater.category}</Text>
+                <Text style={styles.detailCategoryText}>
+                  {(() => {
+                    const categoryOption = (skatingData?.filterOptions?.categories || []).find(
+                      opt => opt.value === selectedSkater.category
+                    );
+                    return categoryOption 
+                      ? `${selectedSkater.category} - ${categoryOption.label}`
+                      : selectedSkater.category;
+                  })()}
+                </Text>
                 
                 {/* Season Filter */}
                 <View style={styles.seasonFilterContainer}>
@@ -692,13 +701,13 @@ export default function RankingsScreen() {
                     <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
                     <View style={styles.timesTable}>
                       <View style={styles.timesTableHeader}>
-                        <Text style={styles.timesTableHeaderText}>Tijd</Text>
+                        <Text style={styles.timesTableHeaderText}>Afstand & Tijd</Text>
                         <Text style={styles.timesTableHeaderText}>Baan</Text>
                       </View>
                       {skaterSeasonTimes.length > 0 ? (
                         skaterSeasonTimes.map((timeData, index) => (
                           <View key={index} style={styles.timesTableRow}>
-                            <View style={styles.timesTableCellTime}>
+                            <View style={styles.timesTableCellTimeContainer}>
                               <View style={styles.distanceBadge}>
                                 <Text style={styles.distanceBadgeText}>{timeData.distance}m</Text>
                               </View>
@@ -706,7 +715,7 @@ export default function RankingsScreen() {
                                 {formatMillisecondsToTime(timeData.ans_time)}
                               </Text>
                             </View>
-                            <View style={styles.timesTableCellTrack}>
+                            <View style={styles.timesTableCellTrackContainer}>
                               <Text style={styles.timesTableCellValueText}>
                                 {timeData.city || '-'}
                               </Text>
@@ -1302,15 +1311,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
     backgroundColor: '#fff',
+    alignItems: 'center',
   },
-  timesTableCellTime: {
+  timesTableCellTimeContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+    justifyContent: 'flex-start',
+    paddingLeft: 8,
   },
-  timesTableCellTrack: {
+  timesTableCellTrackContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -1322,17 +1332,26 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
   },
   distanceBadge: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderWidth: 1,
-    borderColor: '#DBEAFE',
+    backgroundColor: '#1E3A8A',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginRight: 12,
+    minWidth: 50,
+    alignItems: 'center',
+    shadowColor: '#1E3A8A',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
   distanceBadgeText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '700',
-    color: '#1E40AF',
+    color: '#fff',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
