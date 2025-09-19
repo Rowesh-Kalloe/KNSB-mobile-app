@@ -490,10 +490,7 @@ export default function StandingsScreen() {
                     </View>
                   ) : (
                     <View style={styles.timesTableContainer}>
-                      <View style={styles.timesTableTitleContainer}>
-                        <Trophy size={20} color="#1E3A8A" />
-                        <Text style={styles.timesTableTitle}>Beste tijden in {filters.season}</Text>
-                      </View>
+                      <Text style={styles.timesTableTitle}>Beste tijden in {filters.season}</Text>
                       <View style={styles.timesTable}>
                         <View style={styles.timesTableHeader}>
                           <Text style={styles.timesTableHeaderText}>Afstand</Text>
