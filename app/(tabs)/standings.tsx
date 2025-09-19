@@ -24,18 +24,20 @@ import { SkatingAPI } from '@/services/api';
 
 interface SeasonBestResult {
   name: string;
+  person_id: number;
   ans_total_points: number;
   position?: number;
 }
 
 interface SkaterDetailResult {
   name: string;
-  final_time_500?: string;
-  final_time_1000?: string;
-  final_time_1500?: string;
-  final_time_3000?: string;
-  final_time_5000?: string;
-  final_time_10000?: string;
+  person_id: number;
+  ans_time_500?: number;
+  ans_time_1000?: number;
+  ans_time_1500?: number;
+  ans_time_3000?: number;
+  ans_time_5000?: number;
+  ans_time_10000?: number;
 }
 
 export default function StandingsScreen() {
@@ -50,6 +52,18 @@ export default function StandingsScreen() {
   const [skaterDetails, setSkaterDetails] = useState<SkaterDetailResult | null>(null);
   const [loadingSkaterDetails, setLoadingSkaterDetails] = useState(false);
   
+  // Utility function to format milliseconds to MM:SS.xx
+  const formatMillisecondsToTime = (milliseconds: number): string => {
+    if (!milliseconds || milliseconds <= 0) return '-';
+    
+    const totalSeconds = milliseconds / 1000;
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    // Format as MM:SS.xx
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toFixed(2).padStart(5, '0')}`;
+  };
+
   const [filters, setFilters] = useState({
     distance: '500-1000',
     season: '2024',
@@ -104,6 +118,10 @@ export default function StandingsScreen() {
         // Sort by ans_total_points (ascending - fewer points = better position)
         const sortedData = response
           .filter(item => item.ans_total_points != null)
+          .map(item => ({
+            ...item,
+            person_id: item.person_id || 0 // Ensure person_id is included
+          }))
           .sort((a, b) => a.ans_total_points - b.ans_total_points)
           .map((item, index) => ({
             ...item,
@@ -114,6 +132,10 @@ export default function StandingsScreen() {
         // Sort by ans_total_points (ascending - fewer points = better position)
         const sortedData = response.data
           .filter(item => item.ans_total_points != null)
+          .map(item => ({
+            ...item,
+            person_id: item.person_id || 0 // Ensure person_id is included
+          }))
           .sort((a, b) => a.ans_total_points - b.ans_total_points)
           .map((item, index) => ({
             ...item,
@@ -133,7 +155,7 @@ export default function StandingsScreen() {
     }
   };
 
-  const loadSkaterDetails = async (skaterName: string) => {
+  const loadSkaterDetails = async (skater: SeasonBestResult) => {
     try {
       setLoadingSkaterDetails(true);
       
@@ -151,14 +173,16 @@ export default function StandingsScreen() {
       
       const seasonNumbers = [parseInt(filters.season, 10)];
       
-      const response = await SkatingAPI.getSeasonBest({
-        name: skaterName,
-        season: filters.season,
-        distance: distanceNumbers.join(',') // API might expect comma-separated string
+      const response = await SkatingAPI.getSeasonBestPoints({
+        person_id: [skater.person_id],
+        season: seasonNumbers,
+        distance: distanceNumbers
       });
       
-      if (response) {
-        setSkaterDetails(response);
+      if (response && Array.isArray(response) && response.length > 0) {
+        setSkaterDetails(response[0]);
+      } else if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+        setSkaterDetails(response.data[0]);
       } else {
         setSkaterDetails(null);
       }
@@ -172,7 +196,7 @@ export default function StandingsScreen() {
 
   const handleSkaterPress = (skater: SeasonBestResult) => {
     setSelectedSkater(skater);
-    loadSkaterDetails(skater.name);
+    loadSkaterDetails(skater);
   };
 
   const clearAllFilters = () => {
@@ -504,18 +528,20 @@ export default function StandingsScreen() {
                         </View>
                         {(() => {
                           const distances = [];
-                          if (filters.distance.includes('500')) distances.push({ key: 'final_time_500', label: '500m' });
-                          if (filters.distance.includes('1000')) distances.push({ key: 'final_time_1000', label: '1000m' });
-                          if (filters.distance.includes('1500')) distances.push({ key: 'final_time_1500', label: '1500m' });
-                          if (filters.distance.includes('3000')) distances.push({ key: 'final_time_3000', label: '3000m' });
-                          if (filters.distance.includes('5000')) distances.push({ key: 'final_time_5000', label: '5000m' });
-                          if (filters.distance.includes('10000')) distances.push({ key: 'final_time_10000', label: '10000m' });
+                          if (filters.distance.includes('500')) distances.push({ key: 'ans_time_500', label: '500m' });
+                          if (filters.distance.includes('1000')) distances.push({ key: 'ans_time_1000', label: '1000m' });
+                          if (filters.distance.includes('1500')) distances.push({ key: 'ans_time_1500', label: '1500m' });
+                          if (filters.distance.includes('3000')) distances.push({ key: 'ans_time_3000', label: '3000m' });
+                          if (filters.distance.includes('5000')) distances.push({ key: 'ans_time_5000', label: '5000m' });
+                          if (filters.distance.includes('10000')) distances.push({ key: 'ans_time_10000', label: '10000m' });
                           
                           return distances.map((distance) => (
                             <View key={distance.key} style={styles.timesTableRow}>
                               <Text style={styles.timesTableCellLabel}>{distance.label}</Text>
                               <Text style={styles.timesTableCellValue}>
-                                {skaterDetails?.[distance.key as keyof SkaterDetailResult] || '-'}
+                                {skaterDetails?.[distance.key as keyof SkaterDetailResult] 
+                                  ? formatMillisecondsToTime(skaterDetails[distance.key as keyof SkaterDetailResult] as number)
+                                  : '-'}
                               </Text>
                             </View>
                           ));
