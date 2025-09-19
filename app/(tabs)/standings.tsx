@@ -49,7 +49,7 @@ export default function StandingsScreen() {
   // Initialize component
   useEffect(() => {
     loadSeasonBestPoints();
-  }, []);
+  }, [filters.distance, filters.season]); // Re-fetch when data selection filters change
 
   const loadSeasonBestPoints = async () => {
     try {
@@ -57,7 +57,16 @@ export default function StandingsScreen() {
       setError(null);
       
       // Parse distance filter into array of numbers
-      const distanceNumbers = filters.distance.split('-').map(d => parseInt(d, 10));
+      let distanceNumbers: number[] = [];
+      if (filters.distance === '500-1000') {
+        distanceNumbers = [500, 1000];
+      } else if (filters.distance === '500-1000-1500') {
+        distanceNumbers = [500, 1000, 1500];
+      } else if (filters.distance === '500-1500-3000') {
+        distanceNumbers = [500, 1500, 3000];
+      } else if (filters.distance === '500-1000-1500-3000') {
+        distanceNumbers = [500, 1000, 1500, 3000];
+      }
       
       // Parse season filter into array of numbers
       const seasonNumbers = [parseInt(filters.season, 10)];
@@ -129,7 +138,7 @@ export default function StandingsScreen() {
         </View>
         <View style={styles.pointsSection}>
           <Text style={styles.pointsText}>
-            {item.ans_total_points?.toFixed(2) || '-'}
+            {Math.round(item.ans_total_points) || '-'}
           </Text>
         </View>
       </View>
