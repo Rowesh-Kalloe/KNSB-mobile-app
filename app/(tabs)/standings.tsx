@@ -125,11 +125,13 @@ export default function StandingsScreen() {
           <View style={styles.positionBadge}>
             <Text style={styles.positionBadgeText}>{item.position || '-'}</Text>
           </View>
+          <Text style={styles.nameText}>{item.name}</Text>
+        </View>
         <View style={styles.pointsSection}>
           <Text style={styles.pointsText}>
             {item.ans_total_points?.toFixed(2) || '-'}
           </Text>
-      </View>
+        </View>
       </View>
     );
   };
