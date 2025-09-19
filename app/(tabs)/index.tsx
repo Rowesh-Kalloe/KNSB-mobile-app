@@ -60,7 +60,7 @@ export default function RankingsScreen() {
   
   const [filters, setFilters] = useState({
     distance: '500',
-    season: '2025-2026',
+    season: '2024',
     geslachten: 'all',
     level: 'all',
     category: 'all',
@@ -165,7 +165,7 @@ export default function RankingsScreen() {
   const clearAllFilters = () => {
     setFilters({
       distance: '500',
-      season: '2025-2026',
+      season: '2024',
       geslachten: 'all',
       level: 'all',
       category: 'all',
@@ -295,8 +295,26 @@ export default function RankingsScreen() {
         <View style={styles.filtersPanel}>
           <View style={styles.filtersRow}>
             {[
-              { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
-              { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
+              { 
+                key: 'distance', 
+                title: 'Afstand', 
+                options: [
+                  { value: '500', label: '500m' },
+                  { value: '1000', label: '1000m' },
+                  { value: '1500', label: '1500m' },
+                  { value: '3000', label: '3000m' },
+                  { value: '5000', label: '5000m' },
+                  { value: '10000', label: '10000m' }
+                ]
+              },
+              { 
+                key: 'season', 
+                title: 'Seizoen', 
+                options: [
+                  { value: '2024', label: '2024' },
+                  { value: '2023', label: '2023' }
+                ]
+              },
             ].map(({ key, title, options }) => (
               <TouchableOpacity
                 key={key}
@@ -469,8 +487,18 @@ export default function RankingsScreen() {
       </ScrollView>
 
       {/* Filter Modals */}
-      {renderFilterModal('Afstand', skatingData?.filterOptions?.distances || [], filters.distance, 'distance')}
-      {renderFilterModal('Seizoen', skatingData?.filterOptions?.seasons || [], filters.season, 'season')}
+      {renderFilterModal('Afstand', [
+        { value: '500', label: '500m' },
+        { value: '1000', label: '1000m' },
+        { value: '1500', label: '1500m' },
+        { value: '3000', label: '3000m' },
+        { value: '5000', label: '5000m' },
+        { value: '10000', label: '10000m' }
+      ], filters.distance, 'distance')}
+      {renderFilterModal('Seizoen', [
+        { value: '2024', label: '2024' },
+        { value: '2023', label: '2023' }
+      ], filters.season, 'season')}
       {renderFilterModal('Geslacht', skatingData?.filterOptions?.geslachten || [], filters.geslachten, 'geslachten')}
       {renderFilterModal('Niveau', skatingData?.filterOptions?.levels || [], filters.level, 'level')}
       {renderFilterModal('Categorie', skatingData?.filterOptions?.categories || [], filters.category, 'category')}
