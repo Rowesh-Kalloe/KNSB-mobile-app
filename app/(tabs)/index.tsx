@@ -187,8 +187,17 @@ export default function RankingsScreen() {
     console.log('Total results:', results.length);
     console.log('Current filters:', filters);
     console.log('Sample result data:', results[0]);
+    console.log('Raw API sample:', results[0] ? {
+      gender: results[0].geslachten,
+      level: results[0].level,
+      category: results[0].category,
+      track: results[0].track
+    } : 'No data');
     if (results.length > 0) {
       console.log('Gender values in data:', [...new Set(results.map(r => r.geslachten))]);
+      console.log('Level values in data:', [...new Set(results.map(r => r.level))]);
+      console.log('Category values in data:', [...new Set(results.map(r => r.category))]);
+      console.log('Track values in data:', [...new Set(results.map(r => r.track))]);
     }
 
     // Apply search filter
