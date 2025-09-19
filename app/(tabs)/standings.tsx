@@ -1022,14 +1022,16 @@ const styles = StyleSheet.create({
   timesLoadingText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#64748B',
-    fontWeight: '500',
-  },
-  timesTableContainer: {
-    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   timesTableTitle: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B',
+    marginLeft: 6, // ruimte tussen trophy en tekst
+  },
     fontWeight: '700',
     color: '#1E293B',
     marginBottom: 12,
