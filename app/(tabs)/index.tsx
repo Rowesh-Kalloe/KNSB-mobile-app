@@ -189,16 +189,39 @@ export default function RankingsScreen() {
       );
     }
 
-    // Apply other filters (geslachten, level, category, track)
+    // Apply gender filter
     if (filters.geslachten !== 'all') {
       filteredData = filteredData.filter(result => result.geslachten === filters.geslachten);
     }
+    
+    // Apply level filter
     if (filters.level !== 'all') {
       filteredData = filteredData.filter(result => result.level === filters.level);
     }
+    
+    // Apply category filter - map full names to 3-letter codes
     if (filters.category !== 'all') {
-      filteredData = filteredData.filter(result => result.category === filters.category);
+      // Map category filter values to API codes
+      const categoryMap: Record<string, string> = {
+        'HJA': 'HJA',
+        'HJB': 'HJB', 
+        'HJC': 'HJC',
+        'HSA': 'HSA',
+        'HSB': 'HSB',
+        'HSC': 'HSC',
+        'DJA': 'DJA',
+        'DJB': 'DJB',
+        'DJC': 'DJC',
+        'DSA': 'DSA',
+        'DSB': 'DSB',
+        'DSC': 'DSC'
+      };
+      
+      const targetCategory = categoryMap[filters.category] || filters.category;
+      filteredData = filteredData.filter(result => result.category === targetCategory);
     }
+    
+    // Apply track filter
     if (filters.track !== 'all') {
       filteredData = filteredData.filter(result => result.track === filters.track);
     }
