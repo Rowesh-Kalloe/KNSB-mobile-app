@@ -191,7 +191,14 @@ export default function RankingsScreen() {
 
     // Apply gender filter
     if (filters.geslachten !== 'all') {
-      filteredData = filteredData.filter(result => result.geslachten === filters.geslachten);
+      // Map filter values to API values: heren -> M, dames -> F
+      const genderMap: Record<string, string> = {
+        'heren': 'M',
+        'dames': 'F'
+      };
+      
+      const targetGender = genderMap[filters.geslachten] || filters.geslachten;
+      filteredData = filteredData.filter(result => result.geslachten === targetGender);
     }
     
     // Apply level filter
