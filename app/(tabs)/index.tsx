@@ -287,9 +287,38 @@ export default function RankingsScreen() {
   };
 
   const updateFilter = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters(prev => {
+      const newFilters = { ...prev, [key]: value };
+      
+      // If niveau is changed, reset category to 'all' if current category is not compatible
+      if (key === 'level') {
+        const filteredCategories = (skatingData?.filterOptions?.categories || []).filter(category => 
+          value === 'all' || category.level === value || category.level === 'all'
+        );
+        
+        const currentCategoryExists = filteredCategories.some(cat => cat.value === prev.category);
+        if (!currentCategoryExists) {
+          newFilters.category = 'all';
+        }
+      }
+      
+      return newFilters;
+    });
     setCurrentPage(1);
     setActiveModal(null);
+  };
+
+  // Get filtered categories based on selected level
+  const getFilteredCategories = () => {
+    const allCategories = skatingData?.filterOptions?.categories || [];
+    
+    if (filters.level === 'all') {
+      return allCategories;
+    }
+    
+    return allCategories.filter(category => 
+      category.level === filters.level || category.level === 'all'
+    );
   };
 
   const renderFilterModal = (
@@ -512,7 +541,7 @@ export default function RankingsScreen() {
                 <View>
                   <Text style={styles.filterLabel}>Categorie</Text>
                   <Text style={styles.filterValue}>
-                    {(skatingData?.filterOptions?.categories || []).find(opt => opt.value === filters.category)?.label || 'Alle'}
+                    {getFilteredCategories().find(opt => opt.value === filters.category)?.label || 'Alle'}
                   </Text>
                 </View>
                 <ChevronDown size={16} color="#666" />
@@ -620,7 +649,7 @@ export default function RankingsScreen() {
       ], filters.season, 'season')}
       {renderFilterModal('Geslacht', skatingData?.filterOptions?.geslachten || [], filters.geslachten, 'geslachten')}
       {renderFilterModal('Niveau', skatingData?.filterOptions?.levels || [], filters.level, 'level')}
-      {renderFilterModal('Categorie', skatingData?.filterOptions?.categories || [], filters.category, 'category')}
+      {renderFilterModal('Categorie', getFilteredCategories(), filters.category, 'category')}
 
       {/* Skater Detail Modal */}
       <Modal
