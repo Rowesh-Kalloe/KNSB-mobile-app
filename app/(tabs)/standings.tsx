@@ -311,10 +311,11 @@ export default function StandingsScreen() {
           {/* Results Header */}
           <View style={styles.resultsHeader}>
             <View style={styles.headerLeft}>
-              <Text style={styles.headerText}>Pos.</Text>
               <Text style={styles.headerText}>Naam</Text>
             </View>
-            <Text style={[styles.headerText, styles.headerTextRight]}>Totaal punten</Text>
+            <View style={styles.headerRight}>
+              <Text style={styles.headerText}>Punten</Text>
+            </View>
           </View>
 
           {/* Error State */}
@@ -548,18 +549,15 @@ const styles = StyleSheet.create({
   },
   nameSection: {
     flex: 1,
-  },
-  nameText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'rgb(0, 57, 166)',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   positionBadge: {
     backgroundColor: '#1E3A8A',
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    marginRight: 16,
+    marginRight: 12,
     minWidth: 32,
     alignItems: 'center',
   },
@@ -567,6 +565,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: '700',
+  },
+  nameText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B',
   },
   pointsSection: {
     alignItems: 'flex-end',
@@ -641,6 +644,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   headerText: {
     color: '#fff',
     fontSize: 14,
@@ -652,6 +659,7 @@ const styles = StyleSheet.create({
   headerTextRight: {
     textAlign: 'center',
     marginRight: 0,
+    minWidth: 60,
   },
   resultsList: {
     flex: 1,
@@ -666,6 +674,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
     backgroundColor: '#fff',
+  },
+  timesSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeColumn: {
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  timeText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E293B',
+    fontFamily: 'System',
   },
   errorContainer: {
     backgroundColor: '#FEF2F2',
