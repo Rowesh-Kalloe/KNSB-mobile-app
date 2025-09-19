@@ -24,11 +24,8 @@ import { SkatingAPI } from '@/services/api';
 
 interface SeasonBestResult {
   name: string;
-  distance500?: string;
-  distance1000?: string;
-  distance1500?: string;
-  distance3000?: string;
-  [key: string]: string | undefined;
+  ans_total_points: number;
+  position?: number;
 }
 
 export default function StandingsScreen() {
@@ -72,9 +69,25 @@ export default function StandingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        setSeasonBestData(response);
+        // Sort by ans_total_points (ascending - fewer points = better position)
+        const sortedData = response
+          .filter(item => item.ans_total_points != null)
+          .sort((a, b) => a.ans_total_points - b.ans_total_points)
+          .map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
+        setSeasonBestData(sortedData);
       } else if (response && response.data && Array.isArray(response.data)) {
-        setSeasonBestData(response.data);
+        // Sort by ans_total_points (ascending - fewer points = better position)
+        const sortedData = response.data
+          .filter(item => item.ans_total_points != null)
+          .sort((a, b) => a.ans_total_points - b.ans_total_points)
+          .map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
+        setSeasonBestData(sortedData);
       } else {
         console.warn('Unexpected API response format:', response);
         setSeasonBestData([]);
@@ -105,27 +118,19 @@ export default function StandingsScreen() {
     setActiveModal(null);
   };
 
-  const getDistanceColumns = () => {
-    const distances = filters.distance.split('-');
-    return distances.map(d => `distance${d}`);
-  };
-
   const renderSeasonBestItem = ({ item }: { item: SeasonBestResult }) => {
-    const distanceColumns = getDistanceColumns();
-    
     return (
       <View style={styles.resultRow}>
         <View style={styles.nameSection}>
+          <View style={styles.positionBadge}>
+            <Text style={styles.positionBadgeText}>{item.position || '-'}</Text>
+          </View>
           <Text style={styles.nameText}>{item.name}</Text>
         </View>
-        <View style={styles.timesSection}>
-          {distanceColumns.map((distanceKey, index) => (
-            <View key={distanceKey} style={styles.timeColumn}>
-              <Text style={styles.timeText}>
-                {item[distanceKey] || '-'}
-              </Text>
-            </View>
-          ))}
+        <View style={styles.pointsSection}>
+          <Text style={styles.pointsText}>
+            {item.ans_total_points?.toFixed(2) || '-'}
+          </Text>
         </View>
       </View>
     );
@@ -306,15 +311,10 @@ export default function StandingsScreen() {
           {/* Results Header */}
           <View style={styles.resultsHeader}>
             <View style={styles.headerLeft}>
+              <Text style={styles.headerText}>Pos.</Text>
               <Text style={styles.headerText}>Naam</Text>
             </View>
-            <View style={styles.headerRight}>
-              {filters.distance.split('-').map((distance) => (
-                <Text key={distance} style={[styles.headerText, styles.headerTextRight]}>
-                  {distance}m
-                </Text>
-              ))}
-            </View>
+            <Text style={[styles.headerText, styles.headerTextRight]}>Totaal punten</Text>
           </View>
 
           {/* Error State */}
@@ -552,7 +552,30 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 16,
     fontWeight: '600',
+    color: 'rgb(0, 57, 166)',
+  },
+  positionBadge: {
+    backgroundColor: '#1E3A8A',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 16,
+    minWidth: 32,
+    alignItems: 'center',
+  },
+  positionBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  pointsSection: {
+    alignItems: 'flex-end',
+  },
+  pointsText: {
+    fontSize: 16,
+    fontWeight: '700',
     color: '#1E293B',
+    fontFamily: 'System',
   },
   contentArea: {
     flex: 1,
@@ -618,10 +641,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   headerText: {
     color: '#fff',
     fontSize: 14,
@@ -633,7 +652,6 @@ const styles = StyleSheet.create({
   headerTextRight: {
     textAlign: 'center',
     marginRight: 0,
-    minWidth: 60,
   },
   resultsList: {
     flex: 1,
@@ -648,20 +666,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
     backgroundColor: '#fff',
-  },
-  timesSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  timeColumn: {
-    minWidth: 60,
-    alignItems: 'center',
-  },
-  timeText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1E293B',
-    fontFamily: 'System',
   },
   errorContainer: {
     backgroundColor: '#FEF2F2',
