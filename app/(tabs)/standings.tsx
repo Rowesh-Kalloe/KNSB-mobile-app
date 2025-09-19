@@ -46,6 +46,7 @@ export default function StandingsScreen() {
   const [showFilters, setShowFilters] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDataSelection, setShowDataSelection] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [seasonBestData, setSeasonBestData] = useState<SeasonBestResult[]>([]);
   const [selectedSkater, setSelectedSkater] = useState<SeasonBestResult | null>(null);
