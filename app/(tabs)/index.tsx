@@ -23,6 +23,7 @@ import {
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
 // import { SkatingAPI } from '@/services/api';
+import { SkatingAPI } from '@/services/api';
 
 interface Result {
   id: number;
@@ -49,13 +50,13 @@ interface FilterOption {
 export default function RankingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [showDataSelection, setShowDataSelection] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<Result[]>([]);
   
   const [filters, setFilters] = useState({
     distance: '500',
@@ -70,47 +71,88 @@ export default function RankingsScreen() {
 
   // Initialize component
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
+    loadResults();
+  }, [filters.distance, filters.season]); // Re-fetch when data selection filters change
+
+  const loadResults = async () => {
+    try {
+      setIsLoading(true);
       setError(null);
-    }, 500); // Small delay for better UX
+      
+      const response = await SkatingAPI.getRaces({
+        distance: filters.distance,
+        season: filters.season
+      });
+      
+      if (response && Array.isArray(response)) {
+        // Convert times from milliseconds to MM:SS.xx format and add positions
+        const processedResults = response.map((item, index) => ({
+          id: item.id || index + 1,
+          position: index + 1,
+          name: item.name || 'Onbekend',
+          time: item.time || '',
+          ansTime: formatMillisecondsToTime(item.ans_time || 0),
+          change: item.change || 0,
+          date: item.date || '',
+          track: item.track || '',
+          category: item.category || '',
+          geslachten: item.geslachten || '',
+          level: item.level || '',
+          distance: parseInt(filters.distance) || 500
+        }));
+        setResults(processedResults);
+      } else {
+        console.warn('Unexpected API response format:', response);
+        setResults([]);
+      }
+    } catch (err: any) {
+      console.error('Error loading results:', err);
+      setError(err?.message || 'Er is een fout opgetreden bij het laden van de resultaten');
+      setResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Utility function to format milliseconds to MM:SS.xx
+  const formatMillisecondsToTime = (milliseconds: number): string => {
+    if (!milliseconds || milliseconds <= 0) return '-';
     
-    return () => clearTimeout(timer);
-  }, []);
+    const totalSeconds = milliseconds / 1000;
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    // Format as MM:SS.xx
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toFixed(2).padStart(5, '0')}`;
+  };
 
   // Filter results based on current filters and search
   const filteredResults = useMemo(() => {
-    // Use local data since API is temporarily disabled
-    const localData = skatingData?.mockResults && Array.isArray(skatingData.mockResults) ? skatingData.mockResults : [];
-    
-    let results = [...localData];
+    let filteredData = [...results];
 
     // Apply search filter
     if (searchQuery.trim()) {
-      results = results.filter(result =>
+      filteredData = filteredData.filter(result =>
         result.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Apply dropdown filters
-    if (filters.distance !== 'all') {
-      results = results.filter(result => result.distance.toString() === filters.distance);
-    }
+    // Apply other filters (geslachten, level, category, track)
     if (filters.geslachten !== 'all') {
-      results = results.filter(result => result.geslachten === filters.geslachten);
+      filteredData = filteredData.filter(result => result.geslachten === filters.geslachten);
     }
     if (filters.level !== 'all') {
-      results = results.filter(result => result.level === filters.level);
+      filteredData = filteredData.filter(result => result.level === filters.level);
     }
     if (filters.category !== 'all') {
-      results = results.filter(result => result.category === filters.category);
+      filteredData = filteredData.filter(result => result.category === filters.category);
     }
     if (filters.track !== 'all') {
-      results = results.filter(result => result.track === filters.track);
+      filteredData = filteredData.filter(result => result.track === filters.track);
     }
 
-    return results;
-  }, [searchQuery, filters]);
+    return filteredData;
+  }, [searchQuery, filters, results]);
 
   // Paginated results
   const paginatedResults = useMemo(() => {
@@ -249,46 +291,29 @@ export default function RankingsScreen() {
           <Text style={styles.sectionTitle}>Ranglijsten Langebaan</Text>
         </View>
 
-        {/* Data Selection Toggle */}
-        <TouchableOpacity
-          style={styles.filterToggle}
-          onPress={() => setShowDataSelection(!showDataSelection)}
-        >
-          <Filter size={20} color="#1E40AF" />
-          <Text style={styles.filterToggleText}>Gegevens selectie</Text>
-          {showDataSelection ? (
-            <ChevronUp size={20} color="#1E40AF" />
-          ) : (
-            <ChevronDown size={20} color="#1E40AF" />
-          )}
-        </TouchableOpacity>
-
-        {/* Data Selection Panel */}
-        {showDataSelection && (
-          <View style={styles.filtersPanel}>
-            {/* Data Selection Dropdowns */}
-            <View style={styles.filtersRow}>
-              {[
-                { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
-                { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
-              ].map(({ key, title, options }) => (
-                <TouchableOpacity
-                  key={key}
-                  style={styles.filterDropdownSmall}
-                  onPress={() => setActiveModal(key)}
-                >
-                  <View>
-                    <Text style={styles.filterLabel}>{title}</Text>
-                    <Text style={styles.filterValue}>
-                      {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
-                    </Text>
-                  </View>
-                  <ChevronDown size={16} color="#666" />
-                </TouchableOpacity>
-              ))}
-            </View>
+        {/* Data Selection Filters */}
+        <View style={styles.filtersPanel}>
+          <View style={styles.filtersRow}>
+            {[
+              { key: 'distance', title: 'Afstand', options: skatingData?.filterOptions?.distances || [] },
+              { key: 'season', title: 'Seizoen', options: skatingData?.filterOptions?.seasons || [] },
+            ].map(({ key, title, options }) => (
+              <TouchableOpacity
+                key={key}
+                style={styles.filterDropdownSmall}
+                onPress={() => setActiveModal(key)}
+              >
+                <View>
+                  <Text style={styles.filterLabel}>{title}</Text>
+                  <Text style={styles.filterValue}>
+                    {options.find(opt => opt.value === filters[key as keyof typeof filters])?.label || 'Alle'}
+                  </Text>
+                </View>
+                <ChevronDown size={16} color="#666" />
+              </TouchableOpacity>
+            ))}
           </View>
-        )}
+        </View>
 
         {/* Filter Toggle */}
         <TouchableOpacity
