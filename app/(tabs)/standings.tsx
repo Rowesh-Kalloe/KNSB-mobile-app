@@ -364,9 +364,9 @@ export default function StandingsScreen() {
           { value: '2023', label: '2023' },
           { value: '2024', label: '2024' }
         ], filters.season, 'season')}
-      </SafeAreaView>
-    </View>
-  );
+    </SafeAreaView>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
