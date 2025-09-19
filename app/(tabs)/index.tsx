@@ -12,6 +12,12 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming,
+  runOnJS
+} from 'react-native-reanimated';
 import {
   Filter,
   Search,
@@ -61,6 +67,10 @@ export default function RankingsScreen() {
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
+
+  // Animation values for modals
+  const modalOpacity = useSharedValue(0);
+  const modalScale = useSharedValue(0.95);
 
   const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
   const [selectedSeason, setSelectedSeason] = useState('2024');
@@ -286,6 +296,35 @@ export default function RankingsScreen() {
     setCurrentPage(1);
   };
 
+  // Handle modal animations
+  const openModal = (modalKey: string) => {
+    setActiveModal(modalKey);
+    modalOpacity.value = withTiming(1, { duration: 200 });
+    modalScale.value = withTiming(1, { duration: 200 });
+  };
+
+  const closeModal = () => {
+    modalOpacity.value = withTiming(0, { duration: 150 });
+    modalScale.value = withTiming(0.95, { duration: 150 });
+    setTimeout(() => {
+      setActiveModal(null);
+    }, 150);
+  };
+
+  // Reset animation values when modal closes
+  useEffect(() => {
+    if (!activeModal) {
+      modalOpacity.value = 0;
+      modalScale.value = 0.95;
+    }
+  }, [activeModal]);
+
+  // Animated styles
+  const animatedModalStyle = useAnimatedStyle(() => ({
+    opacity: modalOpacity.value,
+    transform: [{ scale: modalScale.value }],
+  }));
+
   const updateFilter = (key: string, value: string) => {
     setFilters(prev => {
       const newFilters = { ...prev, [key]: value };
@@ -305,7 +344,7 @@ export default function RankingsScreen() {
       return newFilters;
     });
     setCurrentPage(1);
-    setActiveModal(null);
+    closeModal();
   };
 
   // Get filtered categories based on selected level
@@ -330,22 +369,23 @@ export default function RankingsScreen() {
     <Modal
       visible={activeModal === filterKey}
       transparent
-      animationType="fade"
-      onRequestClose={() => setActiveModal(null)}
+      onRequestClose={closeModal}
     >
       <TouchableOpacity 
         style={styles.modalOverlay}
         activeOpacity={1}
-        onPress={() => setActiveModal(null)}
+        onPress={closeModal}
       >
+        <Animated.View 
+          style={[styles.modalContent, animatedModalStyle]}
+        >
         <TouchableOpacity 
-          style={styles.modalContent}
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
         >
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{title}</Text>
-            <TouchableOpacity onPress={() => setActiveModal(null)}>
+            <TouchableOpacity onPress={closeModal}>
               <X size={24} color="#666" />
             </TouchableOpacity>
           </View>
@@ -372,6 +412,7 @@ export default function RankingsScreen() {
             )}
           />
         </TouchableOpacity>
+        </Animated.View>
       </TouchableOpacity>
     </Modal>
   );
@@ -459,7 +500,7 @@ export default function RankingsScreen() {
               <TouchableOpacity
                 key={key}
                 style={styles.filterDropdownSmall}
-                onPress={() => setActiveModal(key)}
+                onPress={() => openModal(key)}
               >
                 <View>
                   <Text style={styles.filterLabel}>{title}</Text>
@@ -520,7 +561,7 @@ export default function RankingsScreen() {
                   <TouchableOpacity
                     key={key}
                     style={styles.filterDropdownSmall}
-                    onPress={() => setActiveModal(key)}
+                    onPress={() => openModal(key)}
                   >
                     <View>
                       <Text style={styles.filterLabel}>{title}</Text>
@@ -536,7 +577,7 @@ export default function RankingsScreen() {
               {/* Second row: Categorie (full width) */}
               <TouchableOpacity
                 style={styles.filterDropdown}
-                onPress={() => setActiveModal('category')}
+                onPress={() => openModal('category')}
               >
                 <View>
                   <Text style={styles.filterLabel}>Categorie</Text>

@@ -249,22 +249,23 @@ export default function StandingsScreen() {
     <Modal
       visible={activeModal === filterKey}
       transparent
-      animationType="fade"
-      onRequestClose={() => setActiveModal(null)}
+      onRequestClose={closeModal}
     >
       <TouchableOpacity 
         style={styles.modalOverlay}
         activeOpacity={1}
-        onPress={() => setActiveModal(null)}
+        onPress={closeModal}
       >
+        <Animated.View 
+          style={[styles.modalContent, animatedModalStyle]}
+        >
         <TouchableOpacity 
-          style={styles.modalContent}
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
         >
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{title}</Text>
-            <TouchableOpacity onPress={() => setActiveModal(null)}>
+            <TouchableOpacity onPress={closeModal}>
               <X size={24} color="#666" />
             </TouchableOpacity>
           </View>
@@ -291,6 +292,7 @@ export default function StandingsScreen() {
             )}
           />
         </TouchableOpacity>
+        </Animated.View>
       </TouchableOpacity>
     </Modal>
   );
