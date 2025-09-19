@@ -505,7 +505,7 @@ export default function StandingsScreen() {
                     </View>
                   ) : (
                     <View style={styles.timesTableContainer}>
-                      <Text style={styles.timesTableTitle}>Individuele Tijden</Text>
+                      <Text style={styles.timesTableTitle}>Beste tijden in {filters.season}</Text>
                       <View style={styles.timesTable}>
                         <View style={styles.timesTableHeader}>
                           <Text style={styles.timesTableHeaderText}>Afstand</Text>
