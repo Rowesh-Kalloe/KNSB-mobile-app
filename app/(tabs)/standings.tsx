@@ -312,65 +312,48 @@ export default function StandingsScreen() {
             <Text style={styles.sectionTitle}>Seizoen Beste Punten</Text>
           </View>
 
-          {/* Data Selection Toggle */}
-          <TouchableOpacity
-            style={styles.filterToggle}
-            onPress={() => setShowDataSelection(!showDataSelection)}
-          >
-            <Filter size={20} color="#1E40AF" />
-            <Text style={styles.filterToggleText}>Gegevens selectie</Text>
-            {showDataSelection ? (
-              <ChevronUp size={20} color="#1E40AF" />
-            ) : (
-              <ChevronDown size={20} color="#1E40AF" />
-            )}
-          </TouchableOpacity>
-
-          {/* Data Selection Panel */}
-          {showDataSelection && (
-            <View style={styles.filtersPanel}>
-              {/* Data Selection Dropdowns */}
-              <View style={styles.filtersRow}>
-                {[
-                  {
-                    key: 'distance',
-                    title: 'Klassement',
-                    options: [
-                      { value: '500-1000', label: '500-1000' },
-                      { value: '500-1000-1500', label: '500-1000-1500' },
-                      { value: '500-1500-3000', label: '500-1500-3000' },
-                      { value: '500-1000-1500-3000', label: '500-1000-1500-3000' }
-                    ]
-                  },
-                  {
-                    key: 'season',
-                    title: 'Seizoen',
-                    options: [
-                      { value: '2023', label: '2023' },
-                      { value: '2024', label: '2024' }
-                    ]
-                  }
-                ].map((filter) => (
-                  <TouchableOpacity
-                    key={filter.key}
-                    style={styles.filterDropdownSmall}
-                    onPress={() => setActiveModal(filter.key)}
-                  >
-                    <View>
-                      <Text style={styles.filterLabel}>{filter.title}</Text>
-                      <Text style={styles.filterValue}>
-                        {(() => {
-                          const displayValue = filter.options.find(opt => opt.value === filters[filter.key as keyof typeof filters])?.label || filters[filter.key as keyof typeof filters];
-                          return displayValue;
-                        })()}
-                      </Text>
-                    </View>
-                    <ChevronDown size={16} color="#64748B" />
-                  </TouchableOpacity>
-                ))}
-              </View>
+          {/* Data Selection Filters */}
+          <View style={styles.filtersPanel}>
+            <View style={styles.filtersRow}>
+              {[
+                {
+                  key: 'distance',
+                  title: 'Klassement',
+                  options: [
+                    { value: '500-1000', label: '500-1000' },
+                    { value: '500-1000-1500', label: '500-1000-1500' },
+                    { value: '500-1500-3000', label: '500-1500-3000' },
+                    { value: '500-1000-1500-3000', label: '500-1000-1500-3000' }
+                  ]
+                },
+                {
+                  key: 'season',
+                  title: 'Seizoen',
+                  options: [
+                    { value: '2023', label: '2023' },
+                    { value: '2024', label: '2024' }
+                  ]
+                }
+              ].map((filter) => (
+                <TouchableOpacity
+                  key={filter.key}
+                  style={styles.filterDropdownSmall}
+                  onPress={() => setActiveModal(filter.key)}
+                >
+                  <View>
+                    <Text style={styles.filterLabel}>{filter.title}</Text>
+                    <Text style={styles.filterValue}>
+                      {(() => {
+                        const displayValue = filter.options.find(opt => opt.value === filters[filter.key as keyof typeof filters])?.label || filters[filter.key as keyof typeof filters];
+                        return displayValue;
+                      })()}
+                    </Text>
+                  </View>
+                  <ChevronDown size={16} color="#64748B" />
+                </TouchableOpacity>
+              ))}
             </View>
-          )}
+          </View>
 
           {/* Filter Toggle */}
           <TouchableOpacity
