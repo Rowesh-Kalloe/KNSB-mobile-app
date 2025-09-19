@@ -44,7 +44,6 @@ interface SkaterDetailResult {
 export default function StandingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [showDataSelection, setShowDataSelection] = useState(true);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
