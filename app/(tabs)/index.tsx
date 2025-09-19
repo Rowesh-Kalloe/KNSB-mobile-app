@@ -840,6 +840,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
+    transition: 'all 0.2s ease',
+  },
+  'filterToggle:hover': {
+    backgroundColor: '#F0F9FF',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   filterToggleText: {
     flex: 1,
@@ -876,6 +883,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 1,
     elevation: 1,
+    transition: 'all 0.2s ease',
+  },
+  'clearButton:hover': {
+    backgroundColor: '#E0F2FE',
+    transform: 'translateY(-1px)',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   clearButtonText: {
     color: '#475569',
@@ -938,6 +953,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 1,
     elevation: 1,
+    transition: 'all 0.2s ease',
+  },
+  'filterDropdownSmall:hover': {
+    backgroundColor: '#E0F2FE',
+    borderColor: '#0EA5E9',
+    transform: 'translateY(-1px)',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   filterDropdown: {
     width: '100%',
@@ -958,6 +982,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 1,
     elevation: 1,
+    transition: 'all 0.2s ease',
+  },
+  'filterDropdown:hover': {
+    backgroundColor: '#E0F2FE',
+    borderColor: '#0EA5E9',
+    transform: 'translateY(-1px)',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   filterLabel: {
     fontSize: 12,
