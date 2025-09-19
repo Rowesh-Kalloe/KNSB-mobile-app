@@ -12,6 +12,11 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming 
+} from 'react-native-reanimated';
 import {
   Filter,
   Search,
@@ -53,6 +58,31 @@ export default function StandingsScreen() {
   const [selectedSkater, setSelectedSkater] = useState<SeasonBestResult | null>(null);
   const [skaterDetails, setSkaterDetails] = useState<SkaterDetailResult | null>(null);
   const [loadingSkaterDetails, setLoadingSkaterDetails] = useState(false);
+  
+  // Animation values
+  const modalOpacity = useSharedValue(0);
+  const modalScale = useSharedValue(0.95);
+  
+  // Animated styles
+  const animatedModalStyle = useAnimatedStyle(() => {
+    return {
+      opacity: modalOpacity.value,
+      transform: [{ scale: modalScale.value }],
+    };
+  });
+  
+  // Modal functions
+  const openModal = (modalKey: string) => {
+    setActiveModal(modalKey);
+    modalOpacity.value = withTiming(1, { duration: 200 });
+    modalScale.value = withTiming(1, { duration: 200 });
+  };
+  
+  const closeModal = () => {
+    modalOpacity.value = withTiming(0, { duration: 150 });
+    modalScale.value = withTiming(0.95, { duration: 150 });
+    setTimeout(() => setActiveModal(null), 150);
+  };
   
   // Utility function to format milliseconds to MM:SS.xx
   const formatMillisecondsToTime = (milliseconds: number): string => {
@@ -341,7 +371,7 @@ export default function StandingsScreen() {
                 <TouchableOpacity
                   key={filter.key}
                   style={styles.filterDropdownSmall}
-                  onPress={() => setActiveModal(filter.key)}
+                  onPress={() => openModal(filter.key)}
                 >
                   <View>
                     <Text style={styles.filterLabel}>{filter.title}</Text>
