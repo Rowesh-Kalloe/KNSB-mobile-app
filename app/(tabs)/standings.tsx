@@ -19,6 +19,7 @@ import {
   ChevronUp,
   X,
   Ban,
+  Trophy,
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
 import { SkatingAPI } from '@/services/api';
