@@ -497,21 +497,6 @@ export default function StandingsScreen() {
                   
                   <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
                   
-                  <View style={styles.detailInfoGrid}>
-                    <View style={styles.detailInfoItem}>
-                      <Text style={styles.detailInfoLabel}>Totaal Punten</Text>
-                      <Text style={styles.detailInfoValue}>{Math.round(selectedSkater.ans_total_points)}</Text>
-                    </View>
-                    <View style={styles.detailInfoItem}>
-                      <Text style={styles.detailInfoLabel}>Positie</Text>
-                      <Text style={styles.detailInfoValue}>#{selectedSkater.position}</Text>
-                    </View>
-                    <View style={styles.detailInfoItem}>
-                      <Text style={styles.detailInfoLabel}>Seizoen</Text>
-                      <Text style={styles.detailInfoValue}>{filters.season}</Text>
-                    </View>
-                  </View>
-
                   {/* Individual Times Table */}
                   {loadingSkaterDetails ? (
                     <View style={styles.timesLoadingContainer}>
