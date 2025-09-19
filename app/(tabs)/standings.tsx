@@ -28,6 +28,16 @@ interface SeasonBestResult {
   position?: number;
 }
 
+interface SkaterDetailResult {
+  name: string;
+  final_time_500?: string;
+  final_time_1000?: string;
+  final_time_1500?: string;
+  final_time_3000?: string;
+  final_time_5000?: string;
+  final_time_10000?: string;
+}
+
 export default function StandingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -36,6 +46,9 @@ export default function StandingsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [seasonBestData, setSeasonBestData] = useState<SeasonBestResult[]>([]);
+  const [selectedSkater, setSelectedSkater] = useState<SeasonBestResult | null>(null);
+  const [skaterDetails, setSkaterDetails] = useState<SkaterDetailResult | null>(null);
+  const [loadingSkaterDetails, setLoadingSkaterDetails] = useState(false);
   
   const [filters, setFilters] = useState({
     distance: '500-1000',
@@ -120,6 +133,48 @@ export default function StandingsScreen() {
     }
   };
 
+  const loadSkaterDetails = async (skaterName: string) => {
+    try {
+      setLoadingSkaterDetails(true);
+      
+      // Parse distance filter into array of numbers for the detail request
+      let distanceNumbers: number[] = [];
+      if (filters.distance === '500-1000') {
+        distanceNumbers = [500, 1000];
+      } else if (filters.distance === '500-1000-1500') {
+        distanceNumbers = [500, 1000, 1500];
+      } else if (filters.distance === '500-1500-3000') {
+        distanceNumbers = [500, 1500, 3000];
+      } else if (filters.distance === '500-1000-1500-3000') {
+        distanceNumbers = [500, 1000, 1500, 3000];
+      }
+      
+      const seasonNumbers = [parseInt(filters.season, 10)];
+      
+      const response = await SkatingAPI.getSeasonBest({
+        name: skaterName,
+        season: filters.season,
+        distance: distanceNumbers.join(',') // API might expect comma-separated string
+      });
+      
+      if (response) {
+        setSkaterDetails(response);
+      } else {
+        setSkaterDetails(null);
+      }
+    } catch (err: any) {
+      console.error('Error loading skater details:', err);
+      setSkaterDetails(null);
+    } finally {
+      setLoadingSkaterDetails(false);
+    }
+  };
+
+  const handleSkaterPress = (skater: SeasonBestResult) => {
+    setSelectedSkater(skater);
+    loadSkaterDetails(skater.name);
+  };
+
   const clearAllFilters = () => {
     setFilters({
       distance: '500-1000',
@@ -139,7 +194,11 @@ export default function StandingsScreen() {
 
   const renderSeasonBestItem = ({ item }: { item: SeasonBestResult }) => {
     return (
-      <View style={styles.resultRow}>
+      <TouchableOpacity 
+        style={styles.resultRow}
+        activeOpacity={0.7}
+        onPress={() => handleSkaterPress(item)}
+      >
         <View style={styles.nameSection}>
           <View style={styles.positionBadge}>
             <Text style={styles.positionBadgeText}>{item.position || '-'}</Text>
@@ -151,7 +210,7 @@ export default function StandingsScreen() {
             {Math.round(item.ans_total_points) || '-'}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -383,6 +442,92 @@ export default function StandingsScreen() {
           { value: '2023', label: '2023' },
           { value: '2024', label: '2024' }
         ], filters.season, 'season')}
+
+        {/* Skater Detail Modal */}
+        <Modal
+          visible={selectedSkater !== null}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSelectedSkater(null)}
+        >
+          <TouchableOpacity 
+            style={styles.detailModalOverlay}
+            activeOpacity={1}
+            onPress={() => setSelectedSkater(null)}
+          >
+            <TouchableOpacity 
+              style={styles.detailModalContent}
+              activeOpacity={1}
+              onPress={(e) => e.stopPropagation()}
+            >
+              {selectedSkater && (
+                <>
+                  <View style={styles.detailModalHeader}>
+                    <View style={styles.detailPositionBadge}>
+                      <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => setSelectedSkater(null)}>
+                      <X size={24} color="#666" />
+                    </TouchableOpacity>
+                  </View>
+                  
+                  <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
+                  
+                  <View style={styles.detailInfoGrid}>
+                    <View style={styles.detailInfoItem}>
+                      <Text style={styles.detailInfoLabel}>Totaal Punten</Text>
+                      <Text style={styles.detailInfoValue}>{Math.round(selectedSkater.ans_total_points)}</Text>
+                    </View>
+                    <View style={styles.detailInfoItem}>
+                      <Text style={styles.detailInfoLabel}>Positie</Text>
+                      <Text style={styles.detailInfoValue}>#{selectedSkater.position}</Text>
+                    </View>
+                    <View style={styles.detailInfoItem}>
+                      <Text style={styles.detailInfoLabel}>Seizoen</Text>
+                      <Text style={styles.detailInfoValue}>{filters.season}</Text>
+                    </View>
+                  </View>
+
+                  {/* Individual Times Table */}
+                  {loadingSkaterDetails ? (
+                    <View style={styles.timesLoadingContainer}>
+                      <ActivityIndicator size="small" color="#1E3A8A" />
+                      <Text style={styles.timesLoadingText}>Tijden laden...</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.timesTableContainer}>
+                      <Text style={styles.timesTableTitle}>Individuele Tijden</Text>
+                      <View style={styles.timesTable}>
+                        <View style={styles.timesTableHeader}>
+                          <Text style={styles.timesTableHeaderText}>Afstand</Text>
+                          <Text style={styles.timesTableHeaderText}>Tijd</Text>
+                        </View>
+                        {(() => {
+                          const distances = [];
+                          if (filters.distance.includes('500')) distances.push({ key: 'final_time_500', label: '500m' });
+                          if (filters.distance.includes('1000')) distances.push({ key: 'final_time_1000', label: '1000m' });
+                          if (filters.distance.includes('1500')) distances.push({ key: 'final_time_1500', label: '1500m' });
+                          if (filters.distance.includes('3000')) distances.push({ key: 'final_time_3000', label: '3000m' });
+                          if (filters.distance.includes('5000')) distances.push({ key: 'final_time_5000', label: '5000m' });
+                          if (filters.distance.includes('10000')) distances.push({ key: 'final_time_10000', label: '10000m' });
+                          
+                          return distances.map((distance) => (
+                            <View key={distance.key} style={styles.timesTableRow}>
+                              <Text style={styles.timesTableCellLabel}>{distance.label}</Text>
+                              <Text style={styles.timesTableCellValue}>
+                                {skaterDetails?.[distance.key as keyof SkaterDetailResult] || '-'}
+                              </Text>
+                            </View>
+                          ));
+                        })()}
+                      </View>
+                    </View>
+                  )}
+                </>
+              )}
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
     </SafeAreaView>
   </View>
 );
@@ -795,5 +940,140 @@ const styles = StyleSheet.create({
   modalOptionTextSelected: {
     color: '#1E3A8A',
     fontWeight: '600',
+  },
+  detailModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  detailModalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 20,
+  },
+  detailModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  detailPositionBadge: {
+    backgroundColor: '#1E3A8A',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  detailPositionText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  detailNameText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  detailInfoGrid: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  detailInfoItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+  },
+  detailInfoLabel: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  detailInfoValue: {
+    fontSize: 16,
+    color: '#1E293B',
+    fontWeight: '700',
+  },
+  timesLoadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  timesLoadingText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  timesTableContainer: {
+    marginTop: 8,
+  },
+  timesTableTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  timesTable: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  timesTableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#1E3A8A',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  timesTableHeaderText: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    textAlign: 'center',
+  },
+  timesTableRow: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    backgroundColor: '#fff',
+  },
+  timesTableCellLabel: {
+    flex: 1,
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  timesTableCellValue: {
+    flex: 1,
+    fontSize: 14,
+    color: '#1E293B',
+    fontWeight: '700',
+    textAlign: 'center',
+    fontFamily: 'System',
   },
 });
