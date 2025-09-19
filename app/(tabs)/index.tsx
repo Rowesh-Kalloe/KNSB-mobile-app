@@ -698,7 +698,10 @@ export default function RankingsScreen() {
                   </View>
                 ) : (
                   <View style={styles.timesTableContainer}>
-                    <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
+                    <View style={styles.timesTableTitleContainer}>
+                      <Trophy size={20} color="#1E3A8A" />
+                      <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
+                    </View>
                     <View style={styles.timesTable}>
                       <View style={styles.timesTableHeader}>
                         <Text style={styles.timesTableHeaderText}>Afstand & Tijd</Text>
@@ -1180,7 +1183,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 24,
-    textTransform: 'uppercase',
+    textTransform: 'capitalize',
     letterSpacing: 0.5,
   },
   detailInfoGrid: {
@@ -1276,12 +1279,17 @@ const styles = StyleSheet.create({
   timesTableContainer: {
     marginTop: 8,
   },
+  timesTableTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
   timesTableTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 12,
-    textAlign: 'center',
   },
   timesTable: {
     borderRadius: 12,
