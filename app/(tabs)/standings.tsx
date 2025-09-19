@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  Ban,
 } from 'lucide-react-native';
 import skatingData from '@/assets/data/skating_results_data.json';
 import { SkatingAPI } from '@/services/api';
@@ -523,11 +524,15 @@ export default function StandingsScreen() {
                           return distances.map((distance) => (
                             <View key={distance.key} style={styles.timesTableRow}>
                               <Text style={styles.timesTableCellLabel}>{distance.label}</Text>
-                              <Text style={styles.timesTableCellValue}>
-                                {skaterDetails?.[distance.key as keyof SkaterDetailResult] 
-                                  ? formatMillisecondsToTime(skaterDetails[distance.key as keyof SkaterDetailResult] as number)
-                                  : '-'}
-                              </Text>
+                              <View style={styles.timesTableCellValue}>
+                                {skaterDetails?.[distance.key as keyof SkaterDetailResult] ? (
+                                  <Text style={styles.timesTableCellValueText}>
+                                    {formatMillisecondsToTime(skaterDetails[distance.key as keyof SkaterDetailResult] as number)}
+                                  </Text>
+                                ) : (
+                                  <Ban size={16} color="#94A3B8" />
+                                )}
+                              </View>
                             </View>
                           ));
                         })()}
@@ -1081,10 +1086,13 @@ const styles = StyleSheet.create({
   },
   timesTableCellValue: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timesTableCellValueText: {
     fontSize: 14,
     color: '#1E293B',
     fontWeight: '700',
-    textAlign: 'center',
     fontFamily: 'System',
   },
 });
