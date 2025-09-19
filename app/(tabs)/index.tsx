@@ -39,6 +39,13 @@ interface Result {
   geslachten: string;
   level: string;
   distance: number;
+  person_id?: number;
+}
+
+interface SeasonBestTime {
+  distance: number;
+  ans_time: number;
+  city: string;
 }
 
 interface FilterOption {
@@ -55,6 +62,9 @@ export default function RankingsScreen() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
+  const [selectedSeason, setSelectedSeason] = useState('2024');
+  const [skaterSeasonTimes, setSkaterSeasonTimes] = useState<SeasonBestTime[]>([]);
+  const [loadingSkaterTimes, setLoadingSkaterTimes] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
@@ -99,7 +109,8 @@ export default function RankingsScreen() {
           category: item.category || '',
           geslachten: item.geslachten || '',
           level: item.level || '',
-          distance: parseInt(filters.distance) || 500
+          distance: parseInt(filters.distance) || 500,
+          person_id: item.person_id || 0
         }));
         setResults(processedResults);
       } else {
@@ -125,6 +136,46 @@ export default function RankingsScreen() {
     
     // Format as MM:SS.xx
     return `${minutes.toString().padStart(2, '0')}:${seconds.toFixed(2).padStart(5, '0')}`;
+  };
+
+  const loadSkaterSeasonTimes = async (skater: Result, season: string) => {
+    if (!skater.person_id) return;
+    
+    try {
+      setLoadingSkaterTimes(true);
+      
+      const response = await SkatingAPI.getSeasonBest({
+        person_id: [skater.person_id],
+        season: [parseInt(season, 10)],
+        distance: []
+      });
+      
+      if (response && Array.isArray(response)) {
+        setSkaterSeasonTimes(response);
+      } else if (response && response.data && Array.isArray(response.data)) {
+        setSkaterSeasonTimes(response.data);
+      } else {
+        setSkaterSeasonTimes([]);
+      }
+    } catch (err: any) {
+      console.error('Error loading skater season times:', err);
+      setSkaterSeasonTimes([]);
+    } finally {
+      setLoadingSkaterTimes(false);
+    }
+  };
+
+  const handleSkaterPress = (skater: Result) => {
+    setSelectedSkater(skater);
+    setSelectedSeason('2024'); // Reset to most recent season
+    loadSkaterSeasonTimes(skater, '2024');
+  };
+
+  const handleSeasonChange = (season: string) => {
+    setSelectedSeason(season);
+    if (selectedSkater) {
+      loadSkaterSeasonTimes(selectedSkater, season);
+    }
   };
 
   // Filter results based on current filters and search
@@ -241,7 +292,7 @@ export default function RankingsScreen() {
     <TouchableOpacity 
       style={styles.resultRow}
       activeOpacity={0.7}
-      onPress={() => setSelectedSkater(item)}
+      onPress={() => handleSkaterPress(item)}
     >
       <View style={styles.nameSection}>
         <View style={styles.positionBadge}>
@@ -553,23 +604,71 @@ export default function RankingsScreen() {
                 
                 <Text style={styles.detailCategoryText}>{selectedSkater.category}</Text>
                 
-                {selectedSkater.change !== 0 && (
-                  <View style={styles.detailChangeSection}>
-                    <Text style={styles.detailChangeLabel}>Positie verandering</Text>
-                    <View style={styles.detailChangeContainer}>
-                      {selectedSkater.change > 0 ? (
-                        <ArrowUp size={16} color="#22C55E" />
+                {/* Season Filter */}
+                <View style={styles.seasonFilterContainer}>
+                  <TouchableOpacity
+                    style={[
+                      styles.seasonButton,
+                      selectedSeason === '2024' && styles.seasonButtonActive
+                    ]}
+                    onPress={() => handleSeasonChange('2024')}
+                  >
+                    <Text style={[
+                      styles.seasonButtonText,
+                      selectedSeason === '2024' && styles.seasonButtonTextActive
+                    ]}>2024</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.seasonButton,
+                      selectedSeason === '2023' && styles.seasonButtonActive
+                    ]}
+                    onPress={() => handleSeasonChange('2023')}
+                  >
+                    <Text style={[
+                      styles.seasonButtonText,
+                      selectedSeason === '2023' && styles.seasonButtonTextActive
+                    ]}>2023</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Times Table */}
+                {loadingSkaterTimes ? (
+                  <View style={styles.timesLoadingContainer}>
+                    <ActivityIndicator size="small" color="#1E3A8A" />
+                    <Text style={styles.timesLoadingText}>Tijden laden...</Text>
+                  </View>
+                ) : (
+                  <View style={styles.timesTableContainer}>
+                    <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
+                    <View style={styles.timesTable}>
+                      <View style={styles.timesTableHeader}>
+                        <Text style={styles.timesTableHeaderText}>Tijd</Text>
+                        <Text style={styles.timesTableHeaderText}>Baan</Text>
+                      </View>
+                      {skaterSeasonTimes.length > 0 ? (
+                        skaterSeasonTimes.map((timeData, index) => (
+                          <View key={index} style={styles.timesTableRow}>
+                            <View style={styles.timesTableCellTime}>
+                              <View style={styles.distanceBadge}>
+                                <Text style={styles.distanceBadgeText}>{timeData.distance}m</Text>
+                              </View>
+                              <Text style={styles.timesTableCellValueText}>
+                                {formatMillisecondsToTime(timeData.ans_time)}
+                              </Text>
+                            </View>
+                            <View style={styles.timesTableCellTrack}>
+                              <Text style={styles.timesTableCellValueText}>
+                                {timeData.city || '-'}
+                              </Text>
+                            </View>
+                          </View>
+                        ))
                       ) : (
-                        <ArrowDown size={16} color="#EF4444" />
+                        <View style={styles.noTimesRow}>
+                          <Text style={styles.noTimesText}>Geen tijden beschikbaar voor {selectedSeason}</Text>
+                        </View>
                       )}
-                      <Text
-                        style={[
-                          styles.detailChangeText,
-                          { color: selectedSkater.change > 0 ? '#22C55E' : '#EF4444' },
-                        ]}
-                      >
-                        {Math.abs(selectedSkater.change)} posities
-                      </Text>
                     </View>
                   </View>
                 )}
@@ -1069,6 +1168,135 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     marginLeft: 6,
+  },
+  seasonFilterContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 20,
+    gap: 4,
+  },
+  seasonButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  seasonButtonActive: {
+    backgroundColor: '#1E3A8A',
+    shadowColor: '#1E3A8A',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  seasonButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  seasonButtonTextActive: {
+    color: '#fff',
+  },
+  timesLoadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
+  timesLoadingText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  timesTableContainer: {
+    marginTop: 8,
+  },
+  timesTableTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  timesTable: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  timesTableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#1E3A8A',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  timesTableHeaderText: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    textAlign: 'center',
+  },
+  timesTableRow: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    backgroundColor: '#fff',
+  },
+  timesTableCellTime: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  timesTableCellTrack: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timesTableCellValueText: {
+    fontSize: 14,
+    color: '#1E293B',
+    fontWeight: '700',
+    fontFamily: 'System',
+  },
+  distanceBadge: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  distanceBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#1E40AF',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  noTimesRow: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+  },
+  noTimesText: {
+    fontSize: 14,
+    color: '#64748B',
+    fontStyle: 'italic',
   },
   pagination: {
     flexDirection: 'row',

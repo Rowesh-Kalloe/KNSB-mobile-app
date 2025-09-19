@@ -173,13 +173,16 @@ export const SkatingAPI = {
   },
 
   async getSeasonBest(params: { 
-    skaterId?: string; 
-    name?: string; 
-    season?: string; 
-    distance?: string 
+    person_id?: number[];
+    season?: number[];
+    distance?: number[];
   }) {
     try {
-      const requestBody = cleanFilters(params);
+      const requestBody = {
+        person_id: params.person_id || [],
+        season: params.season || [],
+        distance: params.distance || []
+      };
       console.log('getSeasonBest request body:', requestBody);
       const data = await httpPost('/getSeasonBest', requestBody);
       return data;
