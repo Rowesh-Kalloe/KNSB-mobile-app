@@ -963,6 +963,14 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
+  'filterDropdownSmall:hover': {
+    backgroundColor: '#E0F2FE',
+    borderColor: '#0EA5E9',
+    transform: 'translateY(-1px)',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
   filterDropdown: {
     width: '100%',
     backgroundColor: '#F8FAFC',
@@ -983,6 +991,14 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 1,
     transition: 'all 0.2s ease',
+  },
+  'filterDropdown:hover': {
+    backgroundColor: '#E0F2FE',
+    borderColor: '#0EA5E9',
+    transform: 'translateY(-1px)',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   'filterDropdown:hover': {
     backgroundColor: '#E0F2FE',
