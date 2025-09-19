@@ -551,28 +551,7 @@ export default function RankingsScreen() {
                 
                 <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
                 
-                <View style={styles.detailInfoGrid}>
-                  <View style={styles.detailInfoItem}>
-                    <Text style={styles.detailInfoLabel}>ANS Tijd</Text>
-                    <Text style={styles.detailInfoValue}>{selectedSkater.ansTime}</Text>
-                  </View>
-                  <View style={styles.detailInfoItem}>
-                    <Text style={styles.detailInfoLabel}>Afstand</Text>
-                    <Text style={styles.detailInfoValue}>{selectedSkater.distance}m</Text>
-                  </View>
-                  <View style={styles.detailInfoItem}>
-                    <Text style={styles.detailInfoLabel}>Categorie</Text>
-                    <Text style={styles.detailInfoValue}>{selectedSkater.category}</Text>
-                  </View>
-                  <View style={styles.detailInfoItem}>
-                    <Text style={styles.detailInfoLabel}>Datum</Text>
-                    <Text style={styles.detailInfoValue}>{selectedSkater.date}</Text>
-                  </View>
-                  <View style={styles.detailInfoItem}>
-                    <Text style={styles.detailInfoLabel}>Baan</Text>
-                    <Text style={styles.detailInfoValue}>{selectedSkater.track}</Text>
-                  </View>
-                </View>
+                <Text style={styles.detailCategoryText}>{selectedSkater.category}</Text>
                 
                 {selectedSkater.change !== 0 && (
                   <View style={styles.detailChangeSection}>
@@ -1035,8 +1014,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 24,
+    marginBottom: 8,
     textAlign: 'center',
+  },
+  detailCategoryText: {
+    fontSize: 16,
+    color: '#64748B',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 24,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   detailInfoGrid: {
     gap: 16,
