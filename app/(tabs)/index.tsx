@@ -761,18 +761,20 @@ export default function RankingsScreen() {
                   </TouchableOpacity>
                 </View>
 
-                {/* Times Table */}
-                {loadingSkaterTimes ? (
-                  <View style={styles.timesLoadingContainer}>
-                    <ActivityIndicator size="small" color="#1E3A8A" />
-                    <Text style={styles.timesLoadingText}>Tijden laden...</Text>
+
+                {/* Always render the times table container to maintain modal height */}
+                <View style={styles.timesTableContainer}>
+                  <View style={styles.timesTableTitleContainer}>
+                    <Trophy size={20} color="#1E3A8A" />
+                    <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
                   </View>
-                ) : (
-                  <View style={styles.timesTableContainer}>
-                    <View style={styles.timesTableTitleContainer}>
-                      <Trophy size={20} color="#1E3A8A" />
-                      <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
+                  
+                  {loadingSkaterTimes ? (
+                    <View style={styles.timesLoadingOverlay}>
+                      <ActivityIndicator size="small" color="#1E3A8A" />
+                      <Text style={styles.timesLoadingText}>Tijden laden...</Text>
                     </View>
+                  ) : (
                     <View style={styles.timesTable}>
                       <View style={styles.timesTableHeader}>
                         <Text style={styles.timesTableHeaderText}>Afstand & Tijd</Text>
@@ -802,8 +804,8 @@ export default function RankingsScreen() {
                         </View>
                       )}
                     </View>
-                  </View>
-                )}
+                  )}
+                </View>
               </>
             )}
           </TouchableOpacity>
@@ -1396,8 +1398,23 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontWeight: '500',
   },
+  timesLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    zIndex: 10,
+  },
   timesTableContainer: {
     marginTop: 8,
+    position: 'relative',
+    minHeight: 200,
   },
   timesTableTitleContainer: {
     flexDirection: 'row',
