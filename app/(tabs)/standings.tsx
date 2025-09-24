@@ -768,7 +768,8 @@ const styles = StyleSheet.create({
   },
   filterValue: {
     fontSize: 15,
-    color: 'rgb(0, 57, 166)',
+    color: '#1E293B',
+    fontWeight: '600',
   },
   nameSection: {
     flex: 1,
