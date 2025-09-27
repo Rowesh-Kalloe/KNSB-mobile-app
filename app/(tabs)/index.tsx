@@ -561,6 +561,20 @@ export default function RankingsScreen() {
           {showFilters ? (
             <ChevronUp size={20} color="#1E40AF" />
           ) : (
+              {/* Track Toolbar */}
+              {toolbarVisible && selectedTimeRow && (
+                <TouchableOpacity 
+                  style={styles.toolbarOverlay}
+                  activeOpacity={1}
+                  onPress={hideToolbar}
+                >
+                  <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
+                    <Text style={styles.toolbarText}>
+                      Baan: {selectedTimeRow.city || 'Onbekend'}
+                    </Text>
+                  </Animated.View>
+                </TouchableOpacity>
+              )}
             <ChevronDown size={20} color="#1E40AF" />
           )}
         </TouchableOpacity>
@@ -752,10 +766,7 @@ export default function RankingsScreen() {
                   <View style={styles.detailPositionBadge}>
                     <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
                   </View>
-                  <TouchableOpacity onPress={() => {
-                    setSelectedSkater(null);
-                    hideToolbar(); // Hide toolbar when modal closes
-                  }}>
+                  <TouchableOpacity onPress={() => setSelectedSkater(null)}>
                     <X size={24} color="#666" />
                   </TouchableOpacity>
                 </View>
@@ -846,15 +857,6 @@ export default function RankingsScreen() {
                         </View>
                       )}
                     </View>
-                  )}
-                  
-                  {/* Track Toolbar - positioned inside modal below table */}
-                  {toolbarVisible && selectedTimeRow && (
-                    <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
-                      <Text style={styles.toolbarText}>
-                        Baan: {selectedTimeRow.city || 'Onbekend'}
-                      </Text>
-                    </Animated.View>
                   )}
                 </View>
               </>
@@ -1315,7 +1317,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 24,
-    paddingBottom: 60,
     width: '100%',
     maxWidth: 400,
     shadowColor: '#000',
@@ -1562,12 +1563,21 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontStyle: 'italic',
   },
+  toolbarOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
   trackToolbar: {
     backgroundColor: '#1E3A8A',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 25,
-    marginTop: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1576,7 +1586,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-    alignSelf: 'center',
   },
   toolbarText: {
     color: '#fff',
