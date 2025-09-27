@@ -850,13 +850,11 @@ export default function RankingsScreen() {
                   
                   {/* Track Toolbar - positioned inside modal below table */}
                   {toolbarVisible && selectedTimeRow && (
-                    <View style={styles.toolbarContainer}>
-                      <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
-                        <Text style={styles.toolbarText}>
-                          Baan: {selectedTimeRow.city || 'Onbekend'}
-                        </Text>
-                      </Animated.View>
-                    </View>
+                    <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
+                      <Text style={styles.toolbarText}>
+                        Baan: {selectedTimeRow.city || 'Onbekend'}
+                      </Text>
+                    </Animated.View>
                   )}
                 </View>
               </>
@@ -1564,15 +1562,12 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontStyle: 'italic',
   },
-  toolbarContainer: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
   trackToolbar: {
     backgroundColor: '#1E3A8A',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 25,
+    alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
