@@ -559,26 +559,11 @@ export default function RankingsScreen() {
           <Filter size={20} color="#1E40AF" />
           <Text style={styles.filterToggleText}>Zoekfilters</Text>
           {showFilters ? (
-  <ChevronUp size={20} color="#1E40AF" />
-) : (
-  <>
-    {/* Track Toolbar */}
-    {toolbarVisible && selectedTimeRow && (
-      <TouchableOpacity 
-        style={styles.toolbarOverlay}
-        activeOpacity={1}
-        onPress={hideToolbar}
-      >
-        <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
-          <Text style={styles.toolbarText}>
-            Baan: {selectedTimeRow.city || 'Onbekend'}
-          </Text>
-        </Animated.View>
-      </TouchableOpacity>
-    )}
-    <ChevronDown size={20} color="#1E40AF" />
-  </>
-)}
+            <ChevronUp size={20} color="#1E40AF" />
+          ) : (
+            <ChevronDown size={20} color="#1E40AF" />
+          )}
+        </TouchableOpacity>
 
         </TouchableOpacity>
 
@@ -769,7 +754,10 @@ export default function RankingsScreen() {
                   <View style={styles.detailPositionBadge}>
                     <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
                   </View>
-                  <TouchableOpacity onPress={() => setSelectedSkater(null)}>
+                  <TouchableOpacity onPress={() => {
+                    setSelectedSkater(null);
+                    hideToolbar(); // Hide toolbar when modal closes
+                  }}>
                     <X size={24} color="#666" />
                   </TouchableOpacity>
                 </View>
@@ -859,6 +847,17 @@ export default function RankingsScreen() {
                           <Text style={styles.noTimesText}>Geen tijden beschikbaar voor {selectedSeason}</Text>
                         </View>
                       )}
+                    </View>
+                  )}
+                  
+                  {/* Track Toolbar - positioned inside modal below table */}
+                  {toolbarVisible && selectedTimeRow && (
+                    <View style={styles.toolbarContainer}>
+                      <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
+                        <Text style={styles.toolbarText}>
+                          Baan: {selectedTimeRow.city || 'Onbekend'}
+                        </Text>
+                      </Animated.View>
                     </View>
                   )}
                 </View>
@@ -1566,15 +1565,11 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontStyle: 'italic',
   },
-  toolbarOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
+  toolbarContainer: {
+    marginTop: 16,
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   trackToolbar: {
     backgroundColor: '#1E3A8A',
@@ -1589,6 +1584,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    minWidth: 200,
+    alignItems: 'center',
   },
   toolbarText: {
     color: '#fff',
