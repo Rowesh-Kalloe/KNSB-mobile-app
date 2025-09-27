@@ -561,23 +561,7 @@ export default function RankingsScreen() {
           {showFilters ? (
   <ChevronUp size={20} color="#1E40AF" />
 ) : (
-  <>
-    {/* Track Toolbar */}
-    {toolbarVisible && selectedTimeRow && (
-      <TouchableOpacity 
-        style={styles.toolbarOverlay}
-        activeOpacity={1}
-        onPress={hideToolbar}
-      >
-        <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
-          <Text style={styles.toolbarText}>
-            Baan: {selectedTimeRow.city || 'Onbekend'}
-          </Text>
-        </Animated.View>
-      </TouchableOpacity>
-    )}
-    <ChevronDown size={20} color="#1E40AF" />
-  </>
+  <ChevronDown size={20} color="#1E40AF" />
 )}
 
         </TouchableOpacity>
@@ -860,6 +844,15 @@ export default function RankingsScreen() {
                         </View>
                       )}
                     </View>
+                  )}
+                  
+                  {/* Track Toolbar inside modal */}
+                  {toolbarVisible && selectedTimeRow && (
+                    <Animated.View style={[styles.trackToolbarInModal, animatedToolbarStyle]}>
+                      <Text style={styles.toolbarText}>
+                        Baan: {selectedTimeRow.city || 'Onbekend'}
+                      </Text>
+                    </Animated.View>
                   )}
                 </View>
               </>
@@ -1321,7 +1314,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingTop: 24,
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 45,
     width: '100%',
     maxWidth: 400,
     shadowColor: '#000',
@@ -1568,21 +1561,13 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontStyle: 'italic',
   },
-  toolbarOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  trackToolbar: {
+  trackToolbarInModal: {
     backgroundColor: '#1E3A8A',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 25,
+    marginTop: 20,
+    alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
