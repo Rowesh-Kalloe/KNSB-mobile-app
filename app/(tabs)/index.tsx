@@ -753,6 +753,7 @@ export default function RankingsScreen() {
         animationType="fade"
         onRequestClose={() => setSelectedSkater(null)}
       >
+        {/* Overlay */}
         <TouchableOpacity 
           style={styles.detailModalOverlay}
           activeOpacity={1}
@@ -761,25 +762,31 @@ export default function RankingsScreen() {
             setSelectedSkater(null);
           }}
         >
+          {/* Content */}
           <TouchableOpacity 
             style={styles.detailModalContent}
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
           >
+            {/* ... hier komt al je modal content (header, naam, tijden, etc.) ... */}
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
             {selectedSkater && (
               <>
                 <View style={styles.detailModalHeader}>
                   <View style={styles.detailPositionBadge}>
                     <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
                   </View>
-<TouchableOpacity
-  onPress={() => {
-    hideToolbar(); // Clean up toolbar when closing modal
-    setSelectedSkater(null);
-  }}
->
-  <X size={24} color="#666" />
-</TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        hideToolbar(); // Clean up toolbar when closing modal
+                        setSelectedSkater(null);
+                      }}
+                    >
+                      <X size={24} color="#666" />
+                    </TouchableOpacity>
 
                 </View>
                 
