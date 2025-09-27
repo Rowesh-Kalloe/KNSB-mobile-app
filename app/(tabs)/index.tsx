@@ -83,6 +83,9 @@ export default function RankingsScreen() {
   const [results, setResults] = useState<Result[]>([]);
   const [selectedTimeRow, setSelectedTimeRow] = useState<SeasonBestTime | null>(null);
   const [toolbarVisible, setToolbarVisible] = useState(false);
+  const [lastClickedRowIndex, setLastClickedRowIndex] = useState<number | null>(null);
+  const [isClickDisabled, setIsClickDisabled] = useState(false);
+  const [toolbarTimeoutRef, setToolbarTimeoutRef] = useState<NodeJS.Timeout | null>(null);
   
   const [filters, setFilters] = useState({
     distance: '500',
@@ -193,29 +196,67 @@ export default function RankingsScreen() {
   };
 
   const handleTimeRowPress = (timeData: SeasonBestTime) => {
+    const rowIndex = skaterSeasonTimes.findIndex(item => 
+      item.distance === timeData.distance && item.ans_time === timeData.ans_time
+    );
+    
+    // If clicking the same row and clicks are disabled, ignore
+    if (lastClickedRowIndex === rowIndex && isClickDisabled) {
+      return;
+    }
+    
+    // Clear any existing timeout
+    if (toolbarTimeoutRef) {
+      clearTimeout(toolbarTimeoutRef);
+    }
+    
+    // Update toolbar content immediately
     setSelectedTimeRow(timeData);
+    setLastClickedRowIndex(rowIndex);
     setToolbarVisible(true);
     
     // Show toolbar with animation
     toolbarOpacity.value = withTiming(1, { duration: 300 });
     toolbarTranslateY.value = withTiming(0, { duration: 300 });
     
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
+    // Disable clicks for the same row
+    setIsClickDisabled(true);
+    
+    // Auto-hide after 4 seconds and re-enable clicks
+    const newTimeout = setTimeout(() => {
       hideToolbar();
-    }, 3000);
+      setIsClickDisabled(false);
+      setLastClickedRowIndex(null);
+      setToolbarTimeoutRef(null);
+    }, 4000);
+    
+    setToolbarTimeoutRef(newTimeout);
   };
 
   const hideToolbar = () => {
+    // Clear timeout if it exists
+    if (toolbarTimeoutRef) {
+      clearTimeout(toolbarTimeoutRef);
+      setToolbarTimeoutRef(null);
+    }
+    
+    // Hide toolbar with animation
     toolbarOpacity.value = withTiming(0, { duration: 200 });
     toolbarTranslateY.value = withTiming(20, { duration: 200 });
+    
+    // Clean up state after animation
     setTimeout(() => {
       setToolbarVisible(false);
       setSelectedTimeRow(null);
+      setIsClickDisabled(false);
+      setLastClickedRowIndex(null);
     }, 200);
   };
 
   const handleSkaterPress = (skater: Result) => {
+    // Clean up any existing toolbar state when opening new modal
+    hideToolbar();
+    
     setSelectedSkater(skater);
     setSelectedSeason('2024'); // Reset to most recent season
     loadSkaterSeasonTimes(skater, '2024');
@@ -824,7 +865,7 @@ export default function RankingsScreen() {
                             key={index} 
                             style={styles.timesTableRow}
                             onPress={() => handleTimeRowPress(timeData)}
-                            activeOpacity={0.7}
+                            activeOpacity={lastClickedRowIndex === index && isClickDisabled ? 1 : 0.7}
                           >
                             <View style={styles.timesTableCellTimeContainer}>
                               <View style={styles.distanceBadge}>
