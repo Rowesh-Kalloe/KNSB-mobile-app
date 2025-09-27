@@ -890,12 +890,13 @@ export default function RankingsScreen() {
               </>
             )}
           </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
-              </SafeAreaView>
-      </View>
-    );
-  }
+      </TouchableOpacity>     
+    </Modal>
+  </SafeAreaView>
+</View>
+);
+}
+
 
 const styles = StyleSheet.create({
   container: {
