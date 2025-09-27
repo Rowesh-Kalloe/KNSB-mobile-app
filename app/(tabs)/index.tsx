@@ -781,7 +781,10 @@ export default function RankingsScreen() {
         <TouchableOpacity 
           style={styles.detailModalOverlay}
           activeOpacity={1}
-          onPress={() => setSelectedSkater(null)}
+          onPress={() => {
+            hideToolbar();
+            setSelectedSkater(null);
+          }}
         >
           <TouchableOpacity 
             style={styles.detailModalContent}
@@ -794,7 +797,10 @@ export default function RankingsScreen() {
                   <View style={styles.detailPositionBadge}>
                     <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
                   </View>
-                  <TouchableOpacity onPress={() => setSelectedSkater(null)}>
+                  <TouchableOpacity onPress={() => {
+                    hideToolbar();
+                    setSelectedSkater(null);
+                  }}>
                     <X size={24} color="#666" />
                   </TouchableOpacity>
                 </View>
