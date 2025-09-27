@@ -218,12 +218,15 @@ export default function RankingsScreen() {
     
     toolbarOpacity.value = withTiming(0, { duration: 200 });
     toolbarTranslateY.value = withTiming(20, { duration: 200 });
-    setTimeout(() => {
+    
+    const cleanup = () => {
       setToolbarVisible(false);
       setSelectedTimeRow(null);
       setLastClickedRowIndex(null);
       setIsRowClickDisabled(false);
-    }, 200);
+    };
+    
+    setTimeout(cleanup, 200);
   };
 
   const handleSkaterPress = (skater: Result) => {
