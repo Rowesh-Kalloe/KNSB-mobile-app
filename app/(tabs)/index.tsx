@@ -773,129 +773,76 @@ export default function RankingsScreen() {
         </TouchableOpacity>
       </Modal>
 
-            {selectedSkater && (
-              <>
-                <View style={styles.detailModalHeader}>
-                  <View style={styles.detailPositionBadge}>
-                    <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
-                  </View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        hideToolbar(); // Clean up toolbar when closing modal
-                        setSelectedSkater(null);
-                      }}
-                    >
-                      <X size={24} color="#666" />
-                    </TouchableOpacity>
+            <Modal
+  visible={selectedSkater !== null}
+  transparent
+  animationType="fade"
+  onRequestClose={() => setSelectedSkater(null)}
+>
+  {/* Overlay */}
+  <TouchableOpacity
+    style={styles.detailModalOverlay}
+    activeOpacity={1}
+    onPress={() => {
+      hideToolbar(); // Clean up toolbar when closing modal
+      setSelectedSkater(null);
+    }}
+  >
+    {/* Content */}
+    <TouchableOpacity
+      style={styles.detailModalContent}
+      activeOpacity={1}
+      onPress={(e) => e.stopPropagation()}
+    >
+      {selectedSkater && (
+        <>
+          {/* Header */}
+          <View style={styles.detailModalHeader}>
+            <View style={styles.detailPositionBadge}>
+              <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                hideToolbar();
+                setSelectedSkater(null);
+              }}
+            >
+              <X size={24} color="#666" />
+            </TouchableOpacity>
+          </View>
 
-                </View>
-                
-                <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
-                
-                <Text style={styles.detailCategoryText}>
-                  {(() => {
-                    const categoryOption = (skatingData?.filterOptions?.categories || []).find(
-                      opt => opt.value === selectedSkater.category
-                    );
-                    return categoryOption 
-                      ? `${selectedSkater.category} - ${categoryOption.label}`
-                      : selectedSkater.category;
-                  })()}
-                </Text>
-                
-                {/* Season Filter */}
-                <View style={styles.seasonFilterContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.seasonButton,
-                      selectedSeason === '2024' && styles.seasonButtonActive
-                    ]}
-                    onPress={() => handleSeasonChange('2024')}
-                  >
-                    <Text style={[
-                      styles.seasonButtonText,
-                      selectedSeason === '2024' && styles.seasonButtonTextActive
-                    ]}>2024</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      styles.seasonButton,
-                      selectedSeason === '2023' && styles.seasonButtonActive
-                    ]}
-                    onPress={() => handleSeasonChange('2023')}
-                  >
-                    <Text style={[
-                      styles.seasonButtonText,
-                      selectedSeason === '2023' && styles.seasonButtonTextActive
-                    ]}>2023</Text>
-                  </TouchableOpacity>
-                </View>
+          {/* Naam + categorie */}
+          <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
+          <Text style={styles.detailCategoryText}>
+            {(() => {
+              const categoryOption = (skatingData?.filterOptions?.categories || []).find(
+                opt => opt.value === selectedSkater.category
+              );
+              return categoryOption
+                ? `${selectedSkater.category} - ${categoryOption.label}`
+                : selectedSkater.category;
+            })()}
+          </Text>
 
+          {/* Track Toolbar inside modal */}
+          {toolbarVisible && selectedTimeRow && (
+            <Animated.View style={[styles.trackToolbarInModal, animatedToolbarStyle]}>
+              <Text style={styles.toolbarText}>
+                Baan: {selectedTimeRow.city || 'Onbekend'}
+              </Text>
+            </Animated.View>
+          )}
+        </>
+      )}
+    </TouchableOpacity>
+  </TouchableOpacity>
+</Modal>
 
-                {/* Always render the times table container to maintain modal height */}
-                <View style={styles.timesTableContainer}>
-                  <View style={styles.timesTableTitleContainer}>
-                    <Trophy size={20} color="#1E3A8A" />
-                    <Text style={styles.timesTableTitle}>Beste tijden {selectedSeason}</Text>
-                  </View>
-                  
-                  {loadingSkaterTimes ? (
-                    <View style={styles.timesLoadingOverlay}>
-                      <ActivityIndicator size="small" color="#1E3A8A" />
-                      <Text style={styles.timesLoadingText}>Tijden laden...</Text>
-                    </View>
-                  ) : (
-                    <View style={styles.timesTable}>
-                      <View style={styles.timesTableHeader}>
-                        <Text style={styles.timesTableHeaderText}>Afstand & Tijd</Text>
-                        <Text style={styles.timesTableHeaderText}>Tijd</Text>
-                      </View>
-                      {skaterSeasonTimes.length > 0 ? (
-                        skaterSeasonTimes.map((timeData, index) => (
-                          <TouchableOpacity 
-                            key={index} 
-                            style={styles.timesTableRow}
-                            onPress={() => handleTimeRowPress(timeData, index)}
-                            activeOpacity={0.7}
-                          >
-                            <View style={styles.timesTableCellTimeContainer}>
-                              <View style={styles.distanceBadge}>
-                                <Text style={styles.distanceBadgeText}>{timeData.distance}m</Text>
-                              </View>
-                            </View>
-                            <View style={styles.timesTableCellTrackContainer}>
-                              <Text style={styles.timesTableCellValueText}>
-                                {formatMillisecondsToTime(timeData.ans_time)}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        ))
-                      ) : (
-                        <View style={styles.noTimesRow}>
-                          <Text style={styles.noTimesText}>Geen tijden beschikbaar voor {selectedSeason}</Text>
-                        </View>
-                      )}
-                    </View>
-                  )}
-                  
-                  {/* Track Toolbar inside modal */}
-                  {toolbarVisible && selectedTimeRow && (
-                    <Animated.View style={[styles.trackToolbarInModal, animatedToolbarStyle]}>
-                      <Text style={styles.toolbarText}>
-                        Baan: {selectedTimeRow.city || 'Onbekend'}
-                      </Text>
-                    </Animated.View>
-                  )}
-                </View>
-              </>
-            )}
-          </TouchableOpacity>
-      </TouchableOpacity>     
-    </Modal>
-  </SafeAreaView>
+</SafeAreaView>
 </View>
 );
 }
+
 
 
 const styles = StyleSheet.create({
