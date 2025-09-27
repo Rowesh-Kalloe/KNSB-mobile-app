@@ -52,7 +52,6 @@ export default function TabLayout() {
               backgroundColor: '#1E3A8A',
               height: 3,
             },
-            animation: 'slide_from_right',
           }}>
           <Tabs.Screen
             name="index"
