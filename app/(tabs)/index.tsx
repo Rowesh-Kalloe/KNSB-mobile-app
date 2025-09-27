@@ -798,7 +798,7 @@ export default function RankingsScreen() {
                             </View>
                             <View style={styles.timesTableCellTrackContainer}>
                               <Text style={styles.timesTableCellValueText}>
-                                {timeData.city || '-'}
+                                {timeData.code || '-'}
                               </Text>
                             </View>
                           </View>
