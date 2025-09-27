@@ -2,8 +2,7 @@ import { Tabs } from 'expo-router';
 import { useRouter, useSegments, usePathname } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { View, Dimensions } from 'react-native';
-import { TouchableOpacity, Text } from 'react-native';
+import { View, Dimensions, TouchableOpacity, Text } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -211,7 +210,7 @@ export default function TabLayout() {
             Punten
           </Text>
         </TouchableOpacity>
-      }
+      </View>
     </View>
   );
 }
