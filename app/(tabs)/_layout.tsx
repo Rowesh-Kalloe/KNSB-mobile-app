@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { useRouter, useSegments, usePathname } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { GestureDetector, Gesture, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { View, Dimensions } from 'react-native';
 import { TouchableOpacity, Text } from 'react-native';
 import Animated, { 
@@ -58,6 +58,8 @@ export default function TabLayout() {
   
   // Handle swipe gestures
   const swipeGesture = Gesture.Pan()
+    .activeOffsetX([-10, 10])
+    .failOffsetY([-20, 20])
     .onBegin(() => {
       runOnJS(setIsGestureActive)(true);
     })
@@ -106,54 +108,35 @@ export default function TabLayout() {
     };
   });
   
-  // Animated styles for individual screens
-  const screen1Style = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      translateX.value,
-      [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
-      [0, 1, 0]
-    );
-    return { opacity };
-  });
-  
-  const screen2Style = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      translateX.value,
-      [-SCREEN_WIDTH * 2, -SCREEN_WIDTH, 0],
-      [0, 1, 0]
-    );
-    return { opacity };
-  });
-  
   // Initialize translateX based on current tab
   useEffect(() => {
     translateX.value = -currentTabIndex * SCREEN_WIDTH;
   }, []);
   
   return (
-    <View style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={swipeGesture}>
         <View style={{ flex: 1 }}>
           {/* Sliding container with both screens */}
           <Animated.View 
             style={[
               {
-                flex: 1,
                 flexDirection: 'row',
                 width: SCREEN_WIDTH * 2,
+                height: '100%',
               },
               slidingContainerStyle
             ]}
           >
             {/* Screen 1: Rankings */}
-            <Animated.View style={[{ width: SCREEN_WIDTH, flex: 1 }, screen1Style]}>
+            <View style={{ width: SCREEN_WIDTH, height: '100%' }}>
               <RankingsScreen />
-            </Animated.View>
+            </View>
             
             {/* Screen 2: Standings */}
-            <Animated.View style={[{ width: SCREEN_WIDTH, flex: 1 }, screen2Style]}>
+            <View style={{ width: SCREEN_WIDTH, height: '100%' }}>
               <StandingsScreen />
-            </Animated.View>
+            </View>
           </Animated.View>
         </View>
       </GestureDetector>
@@ -212,7 +195,7 @@ export default function TabLayout() {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 
 }
