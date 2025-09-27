@@ -83,6 +83,9 @@ export default function RankingsScreen() {
   const [results, setResults] = useState<Result[]>([]);
   const [selectedTimeRow, setSelectedTimeRow] = useState<SeasonBestTime | null>(null);
   const [toolbarVisible, setToolbarVisible] = useState(false);
+  const [toolbarTimeoutId, setToolbarTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [lastClickedRowIndex, setLastClickedRowIndex] = useState<number | null>(null);
+  const [isRowClickDisabled, setIsRowClickDisabled] = useState(false);
   
   const [filters, setFilters] = useState({
     distance: '500',
@@ -207,15 +210,25 @@ export default function RankingsScreen() {
   };
 
   const hideToolbar = () => {
+    // Clear any existing timeout
+    if (toolbarTimeoutId) {
+      clearTimeout(toolbarTimeoutId);
+      setToolbarTimeoutId(null);
+    }
+    
     toolbarOpacity.value = withTiming(0, { duration: 200 });
     toolbarTranslateY.value = withTiming(20, { duration: 200 });
     setTimeout(() => {
       setToolbarVisible(false);
       setSelectedTimeRow(null);
+      setLastClickedRowIndex(null);
+      setIsRowClickDisabled(false);
     }, 200);
   };
 
   const handleSkaterPress = (skater: Result) => {
+    // Clean up toolbar state when opening a new modal
+    hideToolbar();
     setSelectedSkater(skater);
     setSelectedSeason('2024'); // Reset to most recent season
     loadSkaterSeasonTimes(skater, '2024');
@@ -740,7 +753,10 @@ export default function RankingsScreen() {
         <TouchableOpacity 
           style={styles.detailModalOverlay}
           activeOpacity={1}
-          onPress={() => setSelectedSkater(null)}
+          onPress={() => {
+            hideToolbar(); // Clean up toolbar when closing modal
+            setSelectedSkater(null);
+          }}
         >
           <TouchableOpacity 
             style={styles.detailModalContent}
@@ -754,6 +770,10 @@ export default function RankingsScreen() {
                     <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
                   </View>
                   <TouchableOpacity onPress={() => setSelectedSkater(null)}>
+                  <TouchableOpacity onPress={() => {
+                    hideToolbar(); // Clean up toolbar when closing modal
+                    setSelectedSkater(null);
+                  }}>
                     <X size={24} color="#666" />
                   </TouchableOpacity>
                 </View>
@@ -823,7 +843,7 @@ export default function RankingsScreen() {
                           <TouchableOpacity 
                             key={index} 
                             style={styles.timesTableRow}
-                            onPress={() => handleTimeRowPress(timeData)}
+                            onPress={() => handleTimeRowPress(timeData, index)}
                             activeOpacity={0.7}
                           >
                             <View style={styles.timesTableCellTimeContainer}>
