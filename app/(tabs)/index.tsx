@@ -565,8 +565,6 @@ export default function RankingsScreen() {
           )}
         </TouchableOpacity>
 
-        </TouchableOpacity>
-
         {/* Filters Panel */}
         {showFilters && (
           <View style={styles.filtersPanel}>
