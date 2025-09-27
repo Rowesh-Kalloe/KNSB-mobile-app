@@ -121,7 +121,7 @@ export default function RankingsScreen() {
           ansTime: formatMillisecondsToTime(item.ans_time || 0),
           change: item.change || 0,
           date: item.date || '',
-          track: item.city || item.track || item.baan || '',
+          track: item.code || item.city || item.track || item.baan || '',
           category: item.cat || item.category || item.categorie || '',
           geslachten: item.gender || item.geslachten || '',
           level: item.level || '',
@@ -171,7 +171,12 @@ export default function RankingsScreen() {
       if (response && Array.isArray(response)) {
         setSkaterSeasonTimes(response);
       } else if (response && response.data && Array.isArray(response.data)) {
-        setSkaterSeasonTimes(response.data);
+        // Map the response data to use code instead of city for track display
+        const mappedData = response.data.map(item => ({
+          ...item,
+          city: item.code || item.city || item.track || ''
+        }));
+        setSkaterSeasonTimes(mappedData);
       } else {
         setSkaterSeasonTimes([]);
       }
