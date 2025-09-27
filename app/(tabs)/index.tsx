@@ -71,6 +71,8 @@ export default function RankingsScreen() {
   // Animation values for modals
   const modalOpacity = useSharedValue(0);
   const modalScale = useSharedValue(0.95);
+  const toolbarOpacity = useSharedValue(0);
+  const toolbarTranslateY = useSharedValue(20);
 
   const [selectedSkater, setSelectedSkater] = useState<Result | null>(null);
   const [selectedSeason, setSelectedSeason] = useState('2024');
@@ -79,6 +81,8 @@ export default function RankingsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
+  const [selectedTimeRow, setSelectedTimeRow] = useState<SeasonBestTime | null>(null);
+  const [toolbarVisible, setToolbarVisible] = useState(false);
   
   const [filters, setFilters] = useState({
     distance: '500',
@@ -174,7 +178,7 @@ export default function RankingsScreen() {
         // Map the response data to use code instead of city for track display
         const mappedData = response.data.map(item => ({
           ...item,
-          city: item.code || item.city || item.track || ''
+          city: item.city || item.code || item.track || ''
         }));
         setSkaterSeasonTimes(mappedData);
       } else {
@@ -186,6 +190,29 @@ export default function RankingsScreen() {
     } finally {
       setLoadingSkaterTimes(false);
     }
+  };
+
+  const handleTimeRowPress = (timeData: SeasonBestTime) => {
+    setSelectedTimeRow(timeData);
+    setToolbarVisible(true);
+    
+    // Show toolbar with animation
+    toolbarOpacity.value = withTiming(1, { duration: 300 });
+    toolbarTranslateY.value = withTiming(0, { duration: 300 });
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      hideToolbar();
+    }, 3000);
+  };
+
+  const hideToolbar = () => {
+    toolbarOpacity.value = withTiming(0, { duration: 200 });
+    toolbarTranslateY.value = withTiming(20, { duration: 200 });
+    setTimeout(() => {
+      setToolbarVisible(false);
+      setSelectedTimeRow(null);
+    }, 200);
   };
 
   const handleSkaterPress = (skater: Result) => {
@@ -328,6 +355,11 @@ export default function RankingsScreen() {
   const animatedModalStyle = useAnimatedStyle(() => ({
     opacity: modalOpacity.value,
     transform: [{ scale: modalScale.value }],
+  }));
+
+  const animatedToolbarStyle = useAnimatedStyle(() => ({
+    opacity: toolbarOpacity.value,
+    transform: [{ translateY: toolbarTranslateY.value }],
   }));
 
   const updateFilter = (key: string, value: string) => {
@@ -529,6 +561,20 @@ export default function RankingsScreen() {
           {showFilters ? (
             <ChevronUp size={20} color="#1E40AF" />
           ) : (
+              {/* Track Toolbar */}
+              {toolbarVisible && selectedTimeRow && (
+                <TouchableOpacity 
+                  style={styles.toolbarOverlay}
+                  activeOpacity={1}
+                  onPress={hideToolbar}
+                >
+                  <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
+                    <Text style={styles.toolbarText}>
+                      Baan: {selectedTimeRow.city || 'Onbekend'}
+                    </Text>
+                  </Animated.View>
+                </TouchableOpacity>
+              )}
             <ChevronDown size={20} color="#1E40AF" />
           )}
         </TouchableOpacity>
@@ -783,25 +829,27 @@ export default function RankingsScreen() {
                     <View style={styles.timesTable}>
                       <View style={styles.timesTableHeader}>
                         <Text style={styles.timesTableHeaderText}>Afstand & Tijd</Text>
-                        <Text style={styles.timesTableHeaderText}>Baan</Text>
+                        <Text style={styles.timesTableHeaderText}>Tijd</Text>
                       </View>
                       {skaterSeasonTimes.length > 0 ? (
                         skaterSeasonTimes.map((timeData, index) => (
-                          <View key={index} style={styles.timesTableRow}>
+                          <TouchableOpacity 
+                            key={index} 
+                            style={styles.timesTableRow}
+                            onPress={() => handleTimeRowPress(timeData)}
+                            activeOpacity={0.7}
+                          >
                             <View style={styles.timesTableCellTimeContainer}>
                               <View style={styles.distanceBadge}>
                                 <Text style={styles.distanceBadgeText}>{timeData.distance}m</Text>
                               </View>
+                            </View>
+                            <View style={styles.timesTableCellTrackContainer}>
                               <Text style={styles.timesTableCellValueText}>
                                 {formatMillisecondsToTime(timeData.ans_time)}
                               </Text>
                             </View>
-                            <View style={styles.timesTableCellTrackContainer}>
-                              <Text style={styles.timesTableCellValueText}>
-                                {timeData.code || '-'}
-                              </Text>
-                            </View>
-                          </View>
+                          </TouchableOpacity>
                         ))
                       ) : (
                         <View style={styles.noTimesRow}>
@@ -1467,8 +1515,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingLeft: 8,
+    justifyContent: 'center',
   },
   timesTableCellTrackContainer: {
     flex: 1,
@@ -1515,6 +1562,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#64748B',
     fontStyle: 'italic',
+  },
+  toolbarOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  trackToolbar: {
+    backgroundColor: '#1E3A8A',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  toolbarText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   pagination: {
     flexDirection: 'row',
