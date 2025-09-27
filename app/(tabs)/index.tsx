@@ -1319,7 +1319,9 @@ const styles = StyleSheet.create({
   detailModalContent: {
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 24,
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
     width: '100%',
     maxWidth: 400,
     shadowColor: '#000',
