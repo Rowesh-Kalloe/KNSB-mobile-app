@@ -772,13 +772,15 @@ export default function RankingsScreen() {
                   <View style={styles.detailPositionBadge}>
                     <Text style={styles.detailPositionText}>#{selectedSkater.position}</Text>
                   </View>
-                  <TouchableOpacity onPress={() => setSelectedSkater(null)}>
-                  <TouchableOpacity onPress={() => {
-                    hideToolbar(); // Clean up toolbar when closing modal
-                    setSelectedSkater(null);
-                  }}>
-                    <X size={24} color="#666" />
-                  </TouchableOpacity>
+<TouchableOpacity
+  onPress={() => {
+    hideToolbar(); // Clean up toolbar when closing modal
+    setSelectedSkater(null);
+  }}
+>
+  <X size={24} color="#666" />
+</TouchableOpacity>
+
                 </View>
                 
                 <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
