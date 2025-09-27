@@ -559,24 +559,27 @@ export default function RankingsScreen() {
           <Filter size={20} color="#1E40AF" />
           <Text style={styles.filterToggleText}>Zoekfilters</Text>
           {showFilters ? (
-            <ChevronUp size={20} color="#1E40AF" />
-          ) : (
-              {/* Track Toolbar */}
-              {toolbarVisible && selectedTimeRow && (
-                <TouchableOpacity 
-                  style={styles.toolbarOverlay}
-                  activeOpacity={1}
-                  onPress={hideToolbar}
-                >
-                  <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
-                    <Text style={styles.toolbarText}>
-                      Baan: {selectedTimeRow.city || 'Onbekend'}
-                    </Text>
-                  </Animated.View>
-                </TouchableOpacity>
-              )}
-            <ChevronDown size={20} color="#1E40AF" />
-          )}
+  <ChevronUp size={20} color="#1E40AF" />
+) : (
+  <>
+    {/* Track Toolbar */}
+    {toolbarVisible && selectedTimeRow && (
+      <TouchableOpacity 
+        style={styles.toolbarOverlay}
+        activeOpacity={1}
+        onPress={hideToolbar}
+      >
+        <Animated.View style={[styles.trackToolbar, animatedToolbarStyle]}>
+          <Text style={styles.toolbarText}>
+            Baan: {selectedTimeRow.city || 'Onbekend'}
+          </Text>
+        </Animated.View>
+      </TouchableOpacity>
+    )}
+    <ChevronDown size={20} color="#1E40AF" />
+  </>
+)}
+
         </TouchableOpacity>
 
         {/* Filters Panel */}
