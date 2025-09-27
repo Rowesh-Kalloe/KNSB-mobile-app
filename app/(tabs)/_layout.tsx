@@ -210,6 +210,7 @@ export default function TabLayout() {
           }}>
             Punten
           </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
