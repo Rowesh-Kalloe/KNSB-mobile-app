@@ -1,141 +1,217 @@
 import { Tabs } from 'expo-router';
-import { useRouter, useSegments } from 'expo-router';
-import { useEffect } from 'react';
+import { useRouter, useSegments, usePathname } from 'expo-router';
+import { useState, useEffect } from 'react';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { View, Dimensions } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
   withSpring,
   runOnJS,
-  interpolate
+  interpolate,
+  withTiming
 } from 'react-native-reanimated';
 import { Trophy, Award } from 'lucide-react-native';
+import RankingsScreen from './index';
+import StandingsScreen from './standings';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function TabLayout() {
   const router = useRouter();
   const segments = useSegments();
+  const pathname = usePathname();
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
   
   // Animation values
   const translateX = useSharedValue(0);
-  const isAnimating = useSharedValue(false);
+  const [isGestureActive, setIsGestureActive] = useState(false);
   
   // Get current tab index
   const getCurrentTabIndex = () => {
-    const currentTab = segments[segments.length - 1];
-    if (currentTab === 'standings') return 1;
+    if (pathname.includes('standings')) return 1;
     return 0; // default to index (Ranglijsten)
   };
   
-  // Navigate with animation
-  const navigateToTab = (targetRoute: string) => {
-    const currentIndex = getCurrentTabIndex();
-    const targetIndex = targetRoute === '/(tabs)/standings' ? 1 : 0;
+  // Update current tab index when route changes
+  useEffect(() => {
+    const newIndex = getCurrentTabIndex();
+    setCurrentTabIndex(newIndex);
     
-    if (currentIndex === targetIndex) return;
+    // Reset translateX when navigating via tab bar
+    if (!isGestureActive) {
+      translateX.value = withTiming(-newIndex * SCREEN_WIDTH, {
+        duration: 300,
+      });
+    }
+  }, [pathname, isGestureActive]);
+  
+  // Navigate to tab
+  const navigateToTab = (index: number) => {
+    if (index === currentTabIndex) return;
     
-    isAnimating.value = true;
-    const direction = targetIndex > currentIndex ? -1 : 1;
-    
-    translateX.value = withSpring(direction * SCREEN_WIDTH, {
-      damping: 20,
-      stiffness: 90,
-    }, () => {
-      runOnJS(() => {
-        router.push(targetRoute as any);
-        translateX.value = 0;
-        isAnimating.value = false;
-      })();
-    });
+    const targetRoute = index === 1 ? '/(tabs)/standings' : '/(tabs)/';
+    setCurrentTabIndex(index);
+    router.push(targetRoute as any);
   };
   
   // Handle swipe gestures
   const swipeGesture = Gesture.Pan()
+    .onBegin(() => {
+      runOnJS(setIsGestureActive)(true);
+    })
     .onUpdate((event) => {
-      if (!isAnimating.value) {
-        translateX.value = event.translationX;
-      }
+      // Calculate the target position based on current tab and gesture
+      const basePosition = -currentTabIndex * SCREEN_WIDTH;
+      translateX.value = basePosition + event.translationX;
     })
     .onEnd((event) => {
       const { velocityX, translationX } = event;
-      const currentIndex = getCurrentTabIndex();
       
-      if (isAnimating.value) return;
+      let targetIndex = currentTabIndex;
       
-      // Swipe left (go to next tab)
-      if ((velocityX < -800 || translationX < -SCREEN_WIDTH * 0.3) && currentIndex === 0) {
-        navigateToTab('/(tabs)/standings');
+      // Determine target based on swipe direction and threshold
+      if (velocityX < -500 || translationX < -SCREEN_WIDTH * 0.25) {
+        // Swipe left - go to next tab
+        targetIndex = Math.min(1, currentTabIndex + 1);
+      } else if (velocityX > 500 || translationX > SCREEN_WIDTH * 0.25) {
+        // Swipe right - go to previous tab
+        targetIndex = Math.max(0, currentTabIndex - 1);
       }
-      // Swipe right (go to previous tab)
-      else if ((velocityX > 800 || translationX > SCREEN_WIDTH * 0.3) && currentIndex === 1) {
-        navigateToTab('/(tabs)/');
-      } else {
-        // Snap back to original position
-        translateX.value = withSpring(0, {
-          damping: 20,
-          stiffness: 90,
-        });
-      }
+      
+      // Animate to target position
+      translateX.value = withSpring(-targetIndex * SCREEN_WIDTH, {
+        damping: 20,
+        stiffness: 90,
+      }, () => {
+        runOnJS(() => {
+          setIsGestureActive(false);
+          if (targetIndex !== currentTabIndex) {
+            navigateToTab(targetIndex);
+          }
+        })();
+      });
+    })
+    .onFinalize(() => {
+      runOnJS(() => {
+        setIsGestureActive(false);
+      })();
     });
   
-  // Animated style for the container
-  const animatedStyle = useAnimatedStyle(() => {
+  // Animated style for the sliding container
+  const slidingContainerStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: translateX.value }],
     };
   });
-
+  
+  // Animated styles for individual screens
+  const screen1Style = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateX.value,
+      [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
+      [0, 1, 0]
+    );
+    return { opacity };
+  });
+  
+  const screen2Style = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateX.value,
+      [-SCREEN_WIDTH * 2, -SCREEN_WIDTH, 0],
+      [0, 1, 0]
+    );
+    return { opacity };
+  });
+  
+  // Initialize translateX based on current tab
+  useEffect(() => {
+    translateX.value = -currentTabIndex * SCREEN_WIDTH;
+  }, []);
+  
   return (
-    <GestureDetector gesture={swipeGesture}>
-      <Animated.View style={[{ flex: 1 }, animatedStyle]}>
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarActiveTintColor: '#EA580C',
-            tabBarInactiveTintColor: '#666',
-            tabBarStyle: {
-              backgroundColor: '#fff',
-              borderTopWidth: 1,
-              borderTopColor: '#e0e0e0',
-              height: 75,
-              paddingBottom: 10,
-              paddingTop: 8,
-            },
-            tabBarIndicatorStyle: {
-              backgroundColor: '#1E3A8A',
-              height: 3,
-            },
+    <View style={{ flex: 1 }}>
+      <GestureDetector gesture={swipeGesture}>
+        <View style={{ flex: 1 }}>
+          {/* Sliding container with both screens */}
+          <Animated.View 
+            style={[
+              {
+                flex: 1,
+                flexDirection: 'row',
+                width: SCREEN_WIDTH * 2,
+              },
+              slidingContainerStyle
+            ]}
+          >
+            {/* Screen 1: Rankings */}
+            <Animated.View style={[{ width: SCREEN_WIDTH, flex: 1 }, screen1Style]}>
+              <RankingsScreen />
+            </Animated.View>
+            
+            {/* Screen 2: Standings */}
+            <Animated.View style={[{ width: SCREEN_WIDTH, flex: 1 }, screen2Style]}>
+              <StandingsScreen />
+            </Animated.View>
+          </Animated.View>
+        </View>
+      </GestureDetector>
+      
+      {/* Tab Bar */}
+      <View style={{
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+        height: 75,
+        paddingBottom: 10,
+        paddingTop: 8,
+      }}>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigateToTab(0)}
+        >
+          <Trophy 
+            size={24} 
+            color={currentTabIndex === 0 ? '#EA580C' : '#666'} 
+          />
+          <Text style={{
+            fontSize: 12,
+            fontWeight: '600',
+            color: currentTabIndex === 0 ? '#EA580C' : '#666',
+            marginTop: 4,
           }}>
-          <Tabs.Screen
-            name="index"
-            options={{
-              title: 'Ranglijsten',
-              tabBarIcon: ({ size, color }) => (
-                <Trophy size={24} color={color} />
-              ),
-              tabBarLabelStyle: {
-                fontSize: 12,
-                fontWeight: '600',
-              },
-            }}
+            Ranglijsten
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigateToTab(1)}
+        >
+          <Award 
+            size={24} 
+            color={currentTabIndex === 1 ? '#EA580C' : '#666'} 
           />
-          <Tabs.Screen
-            name="standings"
-            options={{
-              title: 'Punten',
-              tabBarIcon: ({ size, color }) => (
-                <Award size={24} color={color} />
-              ),
-              tabBarLabelStyle: {
-                fontSize: 12,
-                fontWeight: '600',
-              },
-            }}
-          />
-        </Tabs>
-      </Animated.View>
-    </GestureDetector>
+          <Text style={{
+            fontSize: 12,
+            fontWeight: '600',
+            color: currentTabIndex === 1 ? '#EA580C' : '#666',
+            marginTop: 4,
+          }}>
+            Punten
+          </Text>
+        </TouchableOpacity>
+      }
+    </View>
   );
 }
