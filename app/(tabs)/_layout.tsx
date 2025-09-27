@@ -13,7 +13,7 @@ export default function TabLayout() {
           borderTopWidth: 1,
           borderTopColor: '#e0e0e0',
           height: 65,
-          paddingBottom: 8,
+          paddingBottom: 16,
           paddingTop: 8,
         },
         tabBarIndicatorStyle: {
