@@ -1316,7 +1316,9 @@ const styles = StyleSheet.create({
   detailModalContent: {
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 24,
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
     width: '100%',
     maxWidth: 400,
     shadowColor: '#000',
@@ -1564,10 +1566,9 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   toolbarContainer: {
-    marginTop: 16,
+    marginTop: 20,
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingHorizontal: 0,
   },
   trackToolbar: {
     backgroundColor: '#1E3A8A',
