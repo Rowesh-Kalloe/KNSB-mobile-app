@@ -147,23 +147,21 @@ export default function StandingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        // Process data without sorting - API handles ordering
         const processedData = response
           .filter(item => item.ans_total_points != null)
           .map((item, index) => ({
             ...item,
             person_id: item.person_id || 0, // Ensure person_id is included
-            position: item.position || index + 1 // Use API position or fallback to index
+            position: item.position || index + 1
           }));
         setSeasonBestData(processedData);
       } else if (response && response.data && Array.isArray(response.data)) {
-        // Process data without sorting - API handles ordering
         const processedData = response.data
           .filter(item => item.ans_total_points != null)
           .map((item, index) => ({
             ...item,
             person_id: item.person_id || 0, // Ensure person_id is included
-            position: item.position || index + 1 // Use API position or fallback to index
+            position: item.position || index + 1
           }));
         setSeasonBestData(processedData);
       } else {
