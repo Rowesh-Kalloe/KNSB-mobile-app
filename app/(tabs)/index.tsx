@@ -470,6 +470,7 @@ export default function RankingsScreen() {
           <FlatList
             data={options}
             keyExtractor={(item) => item.value}
+            contentContainerStyle={styles.modalOptionsList}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[
@@ -1726,5 +1727,8 @@ const styles = StyleSheet.create({
   modalOptionTextSelected: {
     color: '#1E3A8A',
     fontWeight: '600',
+  },
+  modalOptionsList: {
+    paddingBottom: 20,
   },
 });
