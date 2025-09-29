@@ -1703,7 +1703,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '70%',
+    maxHeight: '80%',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1748,8 +1748,10 @@ const styles = StyleSheet.create({
   },
   modalOptionsList: {
     paddingBottom: 20,
+    flexGrow: 1,
   },
   modalOptionsListCategory: {
-    paddingBottom: 35,
+    paddingBottom: 50,
+    flexGrow: 1,
   },
 });
