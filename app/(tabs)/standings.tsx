@@ -869,10 +869,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   headerText: {
     color: '#fff',
     fontSize: 14,
@@ -884,6 +880,7 @@ const styles = StyleSheet.create({
   headerTextRight: {
     textAlign: 'center',
     marginRight: 0,
+    minWidth: 60,
     minWidth: 60,
   },
   resultsList: {
