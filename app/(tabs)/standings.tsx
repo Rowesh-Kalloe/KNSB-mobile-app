@@ -147,33 +147,25 @@ export default function StandingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        // Sort by ans_total_points (ascending - fewer points = better position)
-        const sortedData = response
+        // Process data without sorting - API handles ordering
+        const processedData = response
           .filter(item => item.ans_total_points != null)
-          .map(item => ({
-            ...item,
-            person_id: item.person_id || 0 // Ensure person_id is included
-          }))
-          .sort((a, b) => a.ans_total_points - b.ans_total_points)
           .map((item, index) => ({
             ...item,
-            position: index + 1
+            person_id: item.person_id || 0, // Ensure person_id is included
+            position: item.position || index + 1 // Use API position or fallback to index
           }));
-        setSeasonBestData(sortedData);
+        setSeasonBestData(processedData);
       } else if (response && response.data && Array.isArray(response.data)) {
-        // Sort by ans_total_points (ascending - fewer points = better position)
-        const sortedData = response.data
+        // Process data without sorting - API handles ordering
+        const processedData = response.data
           .filter(item => item.ans_total_points != null)
-          .map(item => ({
-            ...item,
-            person_id: item.person_id || 0 // Ensure person_id is included
-          }))
-          .sort((a, b) => a.ans_total_points - b.ans_total_points)
           .map((item, index) => ({
             ...item,
-            position: index + 1
+            person_id: item.person_id || 0, // Ensure person_id is included
+            position: item.position || index + 1 // Use API position or fallback to index
           }));
-        setSeasonBestData(sortedData);
+        setSeasonBestData(processedData);
       } else {
         console.warn('Unexpected API response format:', response);
         setSeasonBestData([]);

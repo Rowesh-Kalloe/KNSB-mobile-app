@@ -119,10 +119,10 @@ export default function RankingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        // Convert times from milliseconds to MM:SS.xx format and add positions
+        // Convert times from milliseconds to MM:SS.xx format
         const processedResults = response.map((item, index) => ({
           id: item.id || index + 1,
-          position: index + 1,
+          position: item.position || index + 1, // Use API position or fallback to index
           name: item.name || 'Onbekend',
           time: item.time || '',
           ansTime: formatMillisecondsToTime(item.ans_time || 0),
