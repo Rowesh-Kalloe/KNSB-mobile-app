@@ -472,10 +472,6 @@ export default function RankingsScreen() {
         <Animated.View 
           style={[styles.modalContent, animatedModalStyle]}
         >
-        <TouchableOpacity 
-          activeOpacity={1}
-          onPress={(e) => e.stopPropagation()}
-        >
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>{title}</Text>
             <TouchableOpacity onPress={closeModal}>
@@ -485,13 +481,12 @@ export default function RankingsScreen() {
           <FlatList
             data={options}
             keyExtractor={(item) => item.value}
-            contentContainerStyle={[
-              styles.modalOptionsList,
-              filterKey === 'category' && styles.modalOptionsListCategory
-            ]}
+            contentContainerStyle={styles.modalOptionsList}
             scrollEnabled={true}
             nestedScrollEnabled={true}
             showsVerticalScrollIndicator={true}
+            bounces={true}
+            alwaysBounceVertical={false}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[
@@ -511,7 +506,6 @@ export default function RankingsScreen() {
               </TouchableOpacity>
             )}
           />
-        </TouchableOpacity>
         </Animated.View>
       </TouchableOpacity>
     </Modal>
@@ -1750,9 +1744,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   modalOptionsList: {
-    paddingBottom: 20,
-  },
-  modalOptionsListCategory: {
     paddingBottom: 20,
   },
 });
