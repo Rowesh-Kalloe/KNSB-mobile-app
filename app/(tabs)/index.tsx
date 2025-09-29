@@ -119,10 +119,10 @@ export default function RankingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        // Use API data in exact order received - no sorting
-        const processedResults = response.map((item) => ({
+        // Convert times from milliseconds to MM:SS.xx format and add positions
+        const processedResults = response.map((item, index) => ({
           id: item.id || index + 1,
-          position: item.position || 0, // Use API position or 0 if not provided
+          position: index + 1,
           name: item.name || 'Onbekend',
           time: item.time || '',
           ansTime: formatMillisecondsToTime(item.ans_time || 0),
@@ -136,6 +136,7 @@ export default function RankingsScreen() {
           person_id: item.person_id || 0
         }));
         
+        console.log('Processed results sample:', processedResults[0]);
         setResults(processedResults);
       } else {
         console.warn('Unexpected API response format:', response);

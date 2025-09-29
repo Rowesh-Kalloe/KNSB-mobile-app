@@ -147,21 +147,33 @@ export default function StandingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        // Use API data in exact order received - no sorting or filtering
-        const processedData = response.map((item) => ({
-          ...item,
-          person_id: item.person_id || 0, // Ensure person_id is included
-          position: item.position || 0 // Use API position or 0 if not provided
-        }));
-        setSeasonBestData(processedData);
+        // Sort by ans_total_points (ascending - fewer points = better position)
+        const sortedData = response
+          .filter(item => item.ans_total_points != null)
+          .map(item => ({
+            ...item,
+            person_id: item.person_id || 0 // Ensure person_id is included
+          }))
+          .sort((a, b) => a.ans_total_points - b.ans_total_points)
+          .map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
+        setSeasonBestData(sortedData);
       } else if (response && response.data && Array.isArray(response.data)) {
-        // Use API data in exact order received - no sorting or filtering
-        const processedData = response.data.map((item) => ({
-          ...item,
-          person_id: item.person_id || 0, // Ensure person_id is included
-          position: item.position || 0 // Use API position or 0 if not provided
-        }));
-        setSeasonBestData(processedData);
+        // Sort by ans_total_points (ascending - fewer points = better position)
+        const sortedData = response.data
+          .filter(item => item.ans_total_points != null)
+          .map(item => ({
+            ...item,
+            person_id: item.person_id || 0 // Ensure person_id is included
+          }))
+          .sort((a, b) => a.ans_total_points - b.ans_total_points)
+          .map((item, index) => ({
+            ...item,
+            position: index + 1
+          }));
+        setSeasonBestData(sortedData);
       } else {
         console.warn('Unexpected API response format:', response);
         setSeasonBestData([]);
