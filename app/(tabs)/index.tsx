@@ -489,6 +489,9 @@ export default function RankingsScreen() {
               styles.modalOptionsList,
               filterKey === 'category' && styles.modalOptionsListCategory
             ]}
+            scrollEnabled={true}
+            nestedScrollEnabled={true}
+            showsVerticalScrollIndicator={true}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[
@@ -1703,7 +1706,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '80%',
+    maxHeight: '85%',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1747,11 +1750,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   modalOptionsList: {
-    paddingBottom: 20,
-    flexGrow: 1,
+    paddingBottom: 30,
   },
   modalOptionsListCategory: {
-    paddingBottom: 50,
-    flexGrow: 1,
+    paddingBottom: 60,
   },
 });
