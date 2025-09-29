@@ -147,22 +147,20 @@ export default function StandingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        const processedData = response
-          .filter(item => item.ans_total_points != null)
-          .map((item, index) => ({
-            ...item,
-            person_id: item.person_id || 0, // Ensure person_id is included
-            position: item.position || index + 1
-          }));
+        // Use API data in exact order received - no sorting or filtering
+        const processedData = response.map((item) => ({
+          ...item,
+          person_id: item.person_id || 0, // Ensure person_id is included
+          position: item.position || 0 // Use API position or 0 if not provided
+        }));
         setSeasonBestData(processedData);
       } else if (response && response.data && Array.isArray(response.data)) {
-        const processedData = response.data
-          .filter(item => item.ans_total_points != null)
-          .map((item, index) => ({
-            ...item,
-            person_id: item.person_id || 0, // Ensure person_id is included
-            position: item.position || index + 1
-          }));
+        // Use API data in exact order received - no sorting or filtering
+        const processedData = response.data.map((item) => ({
+          ...item,
+          person_id: item.person_id || 0, // Ensure person_id is included
+          position: item.position || 0 // Use API position or 0 if not provided
+        }));
         setSeasonBestData(processedData);
       } else {
         console.warn('Unexpected API response format:', response);

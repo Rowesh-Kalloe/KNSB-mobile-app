@@ -119,9 +119,10 @@ export default function RankingsScreen() {
       });
       
       if (response && Array.isArray(response)) {
-        const processedResults = response.map((item, index) => ({
+        // Use API data in exact order received - no sorting
+        const processedResults = response.map((item) => ({
           id: item.id || index + 1,
-          position: item.position || index + 1,
+          position: item.position || 0, // Use API position or 0 if not provided
           name: item.name || 'Onbekend',
           time: item.time || '',
           ansTime: formatMillisecondsToTime(item.ans_time || 0),
