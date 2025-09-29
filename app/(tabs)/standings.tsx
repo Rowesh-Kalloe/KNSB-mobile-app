@@ -320,6 +320,7 @@ export default function StandingsScreen() {
                 </Text>
               </TouchableOpacity>
             )}
+            contentContainerStyle={styles.modalOptionsList}
           />
         </TouchableOpacity>
         </Animated.View>
@@ -1143,5 +1144,8 @@ const styles = StyleSheet.create({
     color: '#1E293B',
     fontWeight: '700',
     fontFamily: 'System',
+  },
+  modalOptionsList: {
+    paddingBottom: 20,
   },
 });
