@@ -435,12 +435,21 @@ export default function RankingsScreen() {
   const getFilteredCategories = () => {
     const allCategories = skatingData?.filterOptions?.categories || [];
     
-    if (filters.level === 'all') {
-      return allCategories;
+    // Filter by level first
+    let filteredByLevel = allCategories;
+    if (filters.level !== 'all') {
+      filteredByLevel = allCategories.filter(category => 
+        category.level === filters.level || category.level === 'all'
+      );
     }
     
-    return allCategories.filter(category => 
-      category.level === filters.level || category.level === 'all'
+    // Then filter by gender
+    if (filters.geslachten === 'all') {
+      return filteredByLevel;
+    }
+    
+    return filteredByLevel.filter(category => 
+      category.gender === filters.geslachten || category.gender === 'all'
     );
   };
 
