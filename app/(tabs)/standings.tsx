@@ -431,11 +431,10 @@ export default function StandingsScreen() {
           {/* Results Header */}
           <View style={styles.resultsHeader}>
             <View style={styles.headerLeft}>
+             <Text style={styles.headerText}>Pos.</Text>
               <Text style={styles.headerText}>Naam</Text>
             </View>
-            <View style={styles.headerRight}>
-              <Text style={styles.headerText}>Punten</Text>
-            </View>
+           <Text style={[styles.headerText, styles.headerTextRight]}>Punten</Text>
           </View>
 
           {/* Error State */}
