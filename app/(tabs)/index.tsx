@@ -470,7 +470,10 @@ export default function RankingsScreen() {
           <FlatList
             data={options}
             keyExtractor={(item) => item.value}
-            contentContainerStyle={styles.modalOptionsList}
+            contentContainerStyle={[
+              styles.modalOptionsList,
+              filterKey === 'category' && styles.modalOptionsListCategory
+            ]}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[
@@ -1730,5 +1733,8 @@ const styles = StyleSheet.create({
   },
   modalOptionsList: {
     paddingBottom: 20,
+  },
+  modalOptionsListCategory: {
+    paddingBottom: 35,
   },
 });
