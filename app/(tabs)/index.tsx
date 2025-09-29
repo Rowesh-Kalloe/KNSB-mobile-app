@@ -70,7 +70,6 @@ export default function RankingsScreen() {
 
   // Animation values for modals
   const modalOpacity = useSharedValue(0);
-  const modalScale = useSharedValue(0.95);
   const toolbarOpacity = useSharedValue(0);
   const toolbarTranslateY = useSharedValue(20);
 
@@ -379,12 +378,10 @@ export default function RankingsScreen() {
   const openModal = (modalKey: string) => {
     setActiveModal(modalKey);
     modalOpacity.value = withTiming(1, { duration: 200 });
-    modalScale.value = withTiming(1, { duration: 200 });
   };
 
   const closeModal = () => {
     modalOpacity.value = withTiming(0, { duration: 150 });
-    modalScale.value = withTiming(0.95, { duration: 150 });
     setTimeout(() => {
       setActiveModal(null);
     }, 150);
@@ -394,14 +391,12 @@ export default function RankingsScreen() {
   useEffect(() => {
     if (!activeModal) {
       modalOpacity.value = 0;
-      modalScale.value = 0.95;
     }
   }, [activeModal]);
 
   // Animated styles
   const animatedModalStyle = useAnimatedStyle(() => ({
     opacity: modalOpacity.value,
-    transform: [{ scale: modalScale.value }],
   }));
 
   const animatedToolbarStyle = useAnimatedStyle(() => ({
