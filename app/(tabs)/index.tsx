@@ -1706,7 +1706,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '85%',
+    maxHeight: '70%',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1750,9 +1750,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   modalOptionsList: {
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
   modalOptionsListCategory: {
-    paddingBottom: 60,
+    paddingBottom: 20,
   },
 });
