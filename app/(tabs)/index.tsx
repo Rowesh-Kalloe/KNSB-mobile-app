@@ -345,6 +345,12 @@ export default function RankingsScreen() {
       filteredData = filteredData.filter(result => result.track === filters.track);
     }
 
+    // Re-assign positions after filtering (1, 2, 3, etc.)
+    filteredData = filteredData.map((result, index) => ({
+      ...result,
+      position: index + 1
+    }));
+
     return filteredData;
   }, [searchQuery, filters, results]);
 
