@@ -816,7 +816,13 @@ export default function RankingsScreen() {
                 
                 <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
                 
-                <View style={styles.detailNameRuler} />
+                <View style={styles.detailNameRulerContainer}>
+                  <View style={styles.detailNameRulerLine} />
+                  <View style={styles.detailNameRulerStar}>
+                    <Trophy size={16} color="#EA580C" />
+                  </View>
+                  <View style={styles.detailNameRulerLine} />
+                </View>
                 
                 <Text style={styles.detailCategoryText}>
                   {(() => {
@@ -1408,10 +1414,37 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  detailNameRuler: {
-    height: 2,
+  detailNameRulerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    paddingHorizontal: 40,
+  },
+  detailNameRulerLine: {
+    flex: 1,
+    height: 1,
     backgroundColor: '#EA580C',
-    width: '60%',
+    opacity: 0.6,
+  },
+  detailNameRulerStar: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 8,
+    marginHorizontal: 12,
+    shadowColor: '#EA580C',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#EA580C',
+    opacity: 0.9,
+  },
+  detailCategoryText: {
     alignSelf: 'center',
     marginBottom: 16,
     borderRadius: 1,
