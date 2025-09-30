@@ -50,6 +50,7 @@ interface SkaterDetailResult {
 export default function StandingsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDataSelection, setShowDataSelection] = useState(false);
@@ -105,6 +106,8 @@ export default function StandingsScreen() {
     track: 'all',
   });
 
+  const resultsPerPage = 20;
+
   // Filter the API data based on search query
   const filteredSeasonBestData = React.useMemo(() => {
     if (!searchQuery.trim()) {
@@ -115,6 +118,15 @@ export default function StandingsScreen() {
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [seasonBestData, searchQuery]);
+
+  // Paginated results
+  const paginatedResults = React.useMemo(() => {
+    const startIndex = (currentPage - 1) * resultsPerPage;
+    return filteredSeasonBestData.slice(startIndex, startIndex + resultsPerPage);
+  }, [filteredSeasonBestData, currentPage]);
+
+  const totalPages = Math.ceil(filteredSeasonBestData.length / resultsPerPage);
+
   // Initialize component
   useEffect(() => {
     loadSeasonBestPoints();
@@ -241,10 +253,12 @@ export default function StandingsScreen() {
       track: 'all',
     });
     setSearchQuery('');
+    setCurrentPage(1);
   };
 
   const updateFilter = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
     setActiveModal(null);
   };
 
@@ -462,13 +476,38 @@ export default function StandingsScreen() {
           {/* Results List */}
           {!isLoading && !error && (
             <FlatList
-              data={filteredSeasonBestData}
+              data={paginatedResults}
               keyExtractor={(item, index) => `${item.name}-${index}`}
               renderItem={renderSeasonBestItem}
               style={styles.resultsList}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
             />
+          )}
+
+          {/* Pagination */}
+          {!isLoading && !error && filteredSeasonBestData.length > 0 && totalPages > 1 && (
+            <View style={styles.pagination}>
+              <TouchableOpacity
+                style={[styles.pageButton, currentPage === 1 && styles.pageButtonDisabled]}
+                onPress={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+              >
+                <Text style={styles.pageButtonText}>Vorige</Text>
+              </TouchableOpacity>
+              
+              <Text style={styles.pageInfo}>
+                Pagina {currentPage} van {totalPages}
+              </Text>
+              
+              <TouchableOpacity
+                style={[styles.pageButton, currentPage === totalPages && styles.pageButtonDisabled]}
+                onPress={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <Text style={styles.pageButtonText}>Volgende</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </ScrollView>
 
@@ -1143,5 +1182,50 @@ const styles = StyleSheet.create({
   },
   modalOptionsList: {
     paddingBottom: 20,
+  },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  pageButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#1E3A8A',
+    borderRadius: 10,
+    shadowColor: '#1E3A8A',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  pageButtonDisabled: {
+    backgroundColor: '#CBD5E1',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  pageButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  pageInfo: {
+    fontSize: 15,
+    color: '#475569',
+    fontWeight: '600',
   },
 });
