@@ -589,7 +589,11 @@ export default function StandingsScreen() {
                           
                           return distances.map((distance) => (
                             <View key={distance.key} style={styles.timesTableRow}>
-                              <Text style={styles.timesTableCellLabel}>{distance.label}</Text>
+                              <View style={styles.timesTableCellDistanceContainer}>
+                                <View style={styles.distanceBadge}>
+                                  <Text style={styles.distanceBadgeText}>{distance.label}</Text>
+                                </View>
+                              </View>
                               <View style={styles.timesTableCellValue}>
                                 {skaterDetails?.[distance.key as keyof SkaterDetailResult] ? (
                                   <Text style={styles.timesTableCellValueText}>
@@ -1206,6 +1210,35 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontWeight: '600',
     textAlign: 'center',
+  },
+  timesTableCellDistanceContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  distanceBadge: {
+    backgroundColor: '#1E3A8A',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    minWidth: 50,
+    alignItems: 'center',
+    shadowColor: '#1E3A8A',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  distanceBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   timesTableCellValue: {
     flex: 1,
