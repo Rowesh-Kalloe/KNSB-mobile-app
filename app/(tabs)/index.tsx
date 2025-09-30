@@ -816,6 +816,8 @@ export default function RankingsScreen() {
                 
                 <Text style={styles.detailNameText}>{selectedSkater.name}</Text>
                 
+                <View style={styles.detailNameRuler} />
+                
                 <Text style={styles.detailCategoryText}>
                   {(() => {
                     const categoryOption = (skatingData?.filterOptions?.categories || []).find(
@@ -1403,8 +1405,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 8,
+    marginBottom: 16,
     textAlign: 'center',
+  },
+  detailNameRuler: {
+    height: 2,
+    backgroundColor: '#EA580C',
+    width: '60%',
+    alignSelf: 'center',
+    marginBottom: 16,
+    borderRadius: 1,
   },
   detailCategoryText: {
     fontSize: 16,
