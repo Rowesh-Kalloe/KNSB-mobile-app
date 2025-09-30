@@ -257,8 +257,8 @@ export default function RankingsScreen() {
     hideToolbar();
     
     setSelectedSkater(skater);
-    setSelectedSeason('2024'); // Reset to most recent season
-    loadSkaterSeasonTimes(skater, '2024');
+    setSelectedSeason(filters.season); // Use the current season filter
+    loadSkaterSeasonTimes(skater, filters.season);
   };
 
   const handleSeasonChange = (season: string) => {
