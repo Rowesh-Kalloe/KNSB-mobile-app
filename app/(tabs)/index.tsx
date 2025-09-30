@@ -574,7 +574,6 @@ export default function RankingsScreen() {
                   { value: '1500', label: '1500m' },
                   { value: '3000', label: '3000m' },
                   { value: '5000', label: '5000m' },
-                  { value: '10000', label: '10000m' }
                 ]
               },
               { 
@@ -772,7 +771,6 @@ export default function RankingsScreen() {
         { value: '1500', label: '1500m' },
         { value: '3000', label: '3000m' },
         { value: '5000', label: '5000m' },
-        { value: '10000', label: '10000m' }
       ], filters.distance, 'distance')}
       {renderFilterModal('Seizoen', [
         { value: '2024', label: '2024' },
