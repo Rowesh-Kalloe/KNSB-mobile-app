@@ -879,7 +879,7 @@ export default function RankingsScreen() {
                   ) : (
                     <View style={styles.timesTable}>
                       <View style={styles.timesTableHeader}>
-                        <Text style={styles.timesTableHeaderText}>Afstand & Tijd</Text>
+                        <Text style={styles.timesTableHeaderText}>Afstand</Text>
                         <Text style={styles.timesTableHeaderText}>Tijd</Text>
                       </View>
                       {skaterSeasonTimes.length > 0 ? (
