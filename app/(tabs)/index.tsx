@@ -1411,14 +1411,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 16,
+    marginBottom: 8,
     textAlign: 'center',
   },
   detailNameRulerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 8,
     paddingHorizontal: 40,
   },
   detailNameRulerLine: {
